@@ -52,6 +52,42 @@
   #death-screen .app-store-link { display: inline-block; margin-top: 4px; transition: opacity 0.2s; }
   #death-screen .app-store-link:hover { opacity: 0.8; }
   #death-screen .app-store-link img { height: 44px; width: auto; border-radius: 8px; }
+
+  #death-screen .actions-row { display: flex; gap: 12px; margin-top: 20px; align-items: center; flex-wrap: wrap; justify-content: center; }
+  #death-screen .actions-row button { margin-top: 0; }
+  #challenge-btn { background: rgba(120,255,180,0.08); border-color: rgba(120,255,180,0.3); color: #78FFB4; }
+  #challenge-btn:hover { background: rgba(120,255,180,0.15); border-color: #78FFB4; color: #fff; }
+  #share-toast {
+    position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%);
+    background: rgba(120,255,180,0.15); border: 1px solid rgba(120,255,180,0.3);
+    color: #78FFB4; padding: 10px 24px; border-radius: 8px;
+    font-family: inherit; font-size: 12px; letter-spacing: 2px;
+    z-index: 50; opacity: 0; transition: opacity 0.3s;
+    pointer-events: none;
+  }
+  #share-toast.visible { opacity: 1; }
+
+  #share-card-wrap {
+    display: none; position: fixed; inset: 0; z-index: 40;
+    background: rgba(0,0,0,0.95);
+    flex-direction: column; align-items: center; justify-content: center; gap: 16px;
+  }
+  #share-card-wrap.visible { display: flex; }
+  #share-card-wrap canvas { border-radius: 12px; max-width: 90vw; max-height: 60vh; }
+  #share-card-wrap .share-actions { display: flex; gap: 12px; }
+  #share-card-wrap button {
+    padding: 10px 24px; background: transparent; border: 1px solid #333;
+    color: #888; font-family: inherit; font-size: 11px; letter-spacing: 2px;
+    text-transform: uppercase; cursor: pointer; transition: all 0.2s;
+  }
+  #share-card-wrap button:hover { border-color: #fff; color: #fff; }
+  #share-card-wrap .primary-share { background: rgba(120,255,180,0.08); border-color: rgba(120,255,180,0.3); color: #78FFB4; }
+  #share-card-wrap .primary-share:hover { background: rgba(120,255,180,0.15); border-color: #78FFB4; }
+
+  .challenge-intro { text-align: center; }
+  .challenge-intro .challenger { font-size: 13px; color: #555; letter-spacing: 3px; text-transform: uppercase; }
+  .challenge-intro .challenge-score { font-size: 44px; font-weight: 200; color: #ff4444; margin: 8px 0; }
+  .challenge-intro .challenge-dare { font-size: 18px; color: #888; font-weight: 200; }
 </style>
 </head>
 <body>
@@ -66,7 +102,8 @@
     </div>
     <h1>Legend presents</h1>
     <div class="title">Fee Dodge</div>
-    <div class="prompt">TAP OR CLICK TO START</div>
+    <div id="challenge-intro" class="challenge-intro" style="display:none;"></div>
+    <div class="prompt" id="start-prompt">TAP OR CLICK TO START</div>
   </div>
 </div>
 
@@ -78,7 +115,10 @@
   <div class="stat" style="font-size:28px; margin-top:8px;">Lost <em id="ds-total">$0</em> to fees</div>
   <div class="fees-list" id="ds-fees"></div>
   <div class="sub">The average American pays $138,000+ in banking fees over a lifetime. On Legend: $0.</div>
-  <button id="retry-btn">Try Again</button>
+  <div class="actions-row">
+    <button id="retry-btn">Try Again</button>
+    <button id="challenge-btn">Challenge a Friend</button>
+  </div>
   <div class="legend-footer">
     <div class="legend-wordmark">
       <svg viewBox="0 0 160 28" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -97,6 +137,16 @@
     </a>
   </div>
 </div>
+
+<div id="share-card-wrap">
+  <canvas id="share-card" width="600" height="315"></canvas>
+  <div class="share-actions">
+    <button class="primary-share" id="share-copy-btn">Copy Link</button>
+    <button id="share-save-btn">Save Image</button>
+    <button id="share-close-btn">Close</button>
+  </div>
+</div>
+<div id="share-toast">Link copied!</div>
 
 <script>
 // --- START SCREEN: Dark room / flashlight reveal ---
@@ -823,6 +873,154 @@ function draw() {
   ctx.restore();
 }
 
+// --- CHALLENGE SYSTEM ---
+const urlParams = new URLSearchParams(window.location.search);
+const challengeScore = urlParams.get('challenge');
+const challengeBy = urlParams.get('by') || '???';
+
+if (challengeScore) {
+  const intro = document.getElementById('challenge-intro');
+  intro.style.display = 'block';
+  intro.innerHTML = `
+    <div class="challenger">${challengeBy} survived</div>
+    <div class="challenge-score">${challengeScore} years</div>
+    <div class="challenge-dare">Can you beat it?</div>
+  `;
+  document.getElementById('start-prompt').textContent = 'TAP TO ACCEPT THE CHALLENGE';
+}
+
+let playerHandle = localStorage.getItem('fd_handle') || '';
+
+function ensureHandle() {
+  if (playerHandle) return playerHandle;
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  playerHandle = '';
+  for (let i = 0; i < 3; i++) playerHandle += chars[Math.floor(Math.random() * chars.length)];
+  localStorage.setItem('fd_handle', playerHandle);
+  return playerHandle;
+}
+
+function getChallengeUrl() {
+  const handle = ensureHandle();
+  const years = getYears();
+  const base = window.location.origin + window.location.pathname;
+  return `${base}?challenge=${years}&by=${handle}`;
+}
+
+function renderShareCard() {
+  const c = document.getElementById('share-card');
+  const cx = c.getContext('2d');
+  const w = 600, h = 315;
+  c.width = w; c.height = h;
+
+  // background
+  cx.fillStyle = '#000';
+  cx.fillRect(0, 0, w, h);
+
+  // grid
+  cx.strokeStyle = 'rgba(120,255,180,0.04)';
+  cx.lineWidth = 0.5;
+  for (let x = 0; x < w; x += 30) { cx.beginPath(); cx.moveTo(x, 0); cx.lineTo(x, h); cx.stroke(); }
+  for (let y = 0; y < h; y += 30) { cx.beginPath(); cx.moveTo(0, y); cx.lineTo(w, y); cx.stroke(); }
+
+  // center glow
+  const glow = cx.createRadialGradient(w/2, h/2, 0, w/2, h/2, 200);
+  glow.addColorStop(0, 'rgba(120,255,180,0.06)');
+  glow.addColorStop(1, 'rgba(0,0,0,0)');
+  cx.fillStyle = glow;
+  cx.fillRect(0, 0, w, h);
+
+  // "FEE DODGE" title
+  cx.fillStyle = '#444';
+  cx.font = '10px monospace';
+  cx.textAlign = 'center';
+  cx.letterSpacing = '4px';
+  cx.fillText('FEE DODGE', w/2, 40);
+
+  // years survived
+  cx.fillStyle = '#fff';
+  cx.font = '200 64px monospace';
+  cx.fillText(getYears(), w/2, 115);
+
+  cx.fillStyle = '#555';
+  cx.font = '12px monospace';
+  cx.fillText('YEARS SURVIVED', w/2, 138);
+
+  // fees lost
+  cx.fillStyle = '#ff4444';
+  cx.font = 'bold 28px monospace';
+  cx.fillText('-$' + totalFeesHit.toFixed(2), w/2 - 100, 190);
+
+  // fees dodged
+  cx.fillStyle = '#78FFB4';
+  cx.font = 'bold 28px monospace';
+  cx.fillText(dodgedCount + ' dodged', w/2 + 100, 190);
+
+  // labels
+  cx.fillStyle = '#333';
+  cx.font = '9px monospace';
+  cx.fillText('FEES TAKEN', w/2 - 100, 205);
+  cx.fillText('FEES DODGED', w/2 + 100, 205);
+
+  // killer fee
+  const sorted = Object.entries(feesHitMap).sort((a, b) => b[1] - a[1]);
+  if (sorted.length > 0) {
+    cx.fillStyle = '#333';
+    cx.font = '10px monospace';
+    cx.fillText('Killed by: ' + sorted[0][0], w/2, 240);
+  }
+
+  // challenge dare
+  const handle = ensureHandle();
+  cx.fillStyle = '#78FFB4';
+  cx.font = 'bold 14px monospace';
+  cx.fillText(handle + ' dares you to beat ' + getYears() + ' years', w/2, 275);
+
+  // Legend branding
+  cx.fillStyle = '#333';
+  cx.font = '9px monospace';
+  cx.fillText('LEGEND \u00B7 feedodge.xyz', w/2, 300);
+
+  // red accent line at top
+  cx.fillStyle = '#ff4444';
+  cx.fillRect(0, 0, w, 2);
+
+  // green accent line at bottom
+  cx.fillStyle = '#78FFB4';
+  cx.fillRect(0, h - 2, w, 2);
+}
+
+function showShareCard() {
+  renderShareCard();
+  document.getElementById('share-card-wrap').classList.add('visible');
+}
+
+document.getElementById('challenge-btn').addEventListener('click', showShareCard);
+
+document.getElementById('share-copy-btn').addEventListener('click', () => {
+  const url = getChallengeUrl();
+  navigator.clipboard.writeText(url).then(() => {
+    const toast = document.getElementById('share-toast');
+    toast.textContent = 'Challenge link copied!';
+    toast.classList.add('visible');
+    setTimeout(() => toast.classList.remove('visible'), 2000);
+  }).catch(() => {
+    prompt('Copy this link:', getChallengeUrl());
+  });
+});
+
+document.getElementById('share-save-btn').addEventListener('click', () => {
+  const c = document.getElementById('share-card');
+  const link = document.createElement('a');
+  link.download = 'fee-dodge-' + getYears() + 'yrs.png';
+  link.href = c.toDataURL('image/png');
+  link.click();
+});
+
+document.getElementById('share-close-btn').addEventListener('click', () => {
+  document.getElementById('share-card-wrap').classList.remove('visible');
+});
+
 function showDeath() {
   document.getElementById('ds-years').textContent = getYears();
   document.getElementById('ds-total').textContent = '$' + totalFeesHit.toFixed(2);
@@ -831,6 +1029,13 @@ function showDeath() {
   feesEl.innerHTML = sorted.slice(0, 6).map(([label, val]) =>
     `<span>-$${val.toFixed(2)}</span> ${label}`
   ).join('<br>');
+
+  // check if beat challenge
+  if (challengeScore && parseFloat(getYears()) > parseFloat(challengeScore)) {
+    const sub = document.querySelector('#death-screen .sub');
+    sub.innerHTML = `<span style="color:#78FFB4;">You beat ${challengeBy}'s ${challengeScore} years!</span><br>` + sub.innerHTML;
+  }
+
   setTimeout(() => document.getElementById('death-screen').classList.add('visible'), 600);
 }
 
