@@ -34,9 +34,12 @@
     display: flex; flex-direction: column;
     align-items: center; justify-content: center;
     z-index: 20; color: #fff; gap: 12px; cursor: pointer;
+    overflow: hidden;
   }
   #start-screen.hidden { display: none; }
-  #start-screen .legend-mark { margin-bottom: 32px; opacity: 0.7; }
+  #start-canvas { position: absolute; inset: 0; z-index: 0; }
+  #start-screen .start-content { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: 12px; pointer-events: none; }
+  #start-screen .legend-mark { margin-bottom: 32px; opacity: 0.7; transition: opacity 0.3s; }
   #start-screen .legend-mark svg { width: 36px; height: 36px; }
   #start-screen h1 { font-size: 11px; letter-spacing: 8px; text-transform: uppercase; color: #555; margin-top: 4px; }
   #start-screen .title { font-size: 56px; font-weight: 200; letter-spacing: -1px; margin-top: 4px; }
@@ -54,14 +57,17 @@
 <body>
 
 <div id="start-screen">
-  <div class="legend-mark">
-    <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M19.969 40C26.4698 40 32.2169 36.9516 35.8639 32.1751C35.9905 32.0093 36.0538 31.9264 36.0807 31.8257C36.1033 31.7409 36.1034 31.639 36.0807 31.5542C36.0539 31.4535 35.9906 31.3706 35.864 31.2047C32.217 26.4263 26.4708 23.3488 20 23.3488C13.5291 23.3488 7.78301 26.4263 4.13599 31.2047C4.00941 31.3706 3.94612 31.4535 3.91924 31.5542C3.89663 31.639 3.89664 31.7409 3.91927 31.8257C3.94616 31.9264 4.00946 32.0093 4.13604 32.1751C7.78303 36.9516 13.5282 40 19.969 40ZM19.969 0C8.94735 0 0 8.96124 0 20C0 23.5331 0.905963 26.8187 2.51107 29.7015C2.6087 29.8769 2.65752 29.9646 2.72878 30.001C2.7901 30.0323 2.86454 30.0382 2.93002 30.0168C3.00611 29.9921 3.06935 29.9115 3.19583 29.7503L19.3376 9.18504C19.5635 8.89719 19.6765 8.75326 19.8135 8.70134C19.9337 8.65582 20.0663 8.65582 20.1864 8.70134C20.3235 8.75326 20.4365 8.89719 20.6624 9.18504L36.8042 29.7503C36.9307 29.9115 36.9939 29.9921 37.07 30.0168C37.1355 30.0382 37.2099 30.0323 37.2712 30.001C37.3425 29.9646 37.3913 29.8769 37.4889 29.7015C39.094 26.8187 40 23.5331 40 20C40 8.96124 31.0526 0 19.969 0Z" fill="white"/>
-    </svg>
+  <canvas id="start-canvas"></canvas>
+  <div class="start-content">
+    <div class="legend-mark">
+      <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M19.969 40C26.4698 40 32.2169 36.9516 35.8639 32.1751C35.9905 32.0093 36.0538 31.9264 36.0807 31.8257C36.1033 31.7409 36.1034 31.639 36.0807 31.5542C36.0539 31.4535 35.9906 31.3706 35.864 31.2047C32.217 26.4263 26.4708 23.3488 20 23.3488C13.5291 23.3488 7.78301 26.4263 4.13599 31.2047C4.00941 31.3706 3.94612 31.4535 3.91924 31.5542C3.89663 31.639 3.89664 31.7409 3.91927 31.8257C3.94616 31.9264 4.00946 32.0093 4.13604 32.1751C7.78303 36.9516 13.5282 40 19.969 40ZM19.969 0C8.94735 0 0 8.96124 0 20C0 23.5331 0.905963 26.8187 2.51107 29.7015C2.6087 29.8769 2.65752 29.9646 2.72878 30.001C2.7901 30.0323 2.86454 30.0382 2.93002 30.0168C3.00611 29.9921 3.06935 29.9115 3.19583 29.7503L19.3376 9.18504C19.5635 8.89719 19.6765 8.75326 19.8135 8.70134C19.9337 8.65582 20.0663 8.65582 20.1864 8.70134C20.3235 8.75326 20.4365 8.89719 20.6624 9.18504L36.8042 29.7503C36.9307 29.9115 36.9939 29.9921 37.07 30.0168C37.1355 30.0382 37.2099 30.0323 37.2712 30.001C37.3425 29.9646 37.3913 29.8769 37.4889 29.7015C39.094 26.8187 40 23.5331 40 20C40 8.96124 31.0526 0 19.969 0Z" fill="white"/>
+      </svg>
+    </div>
+    <h1>Legend presents</h1>
+    <div class="title">Fee Dodge</div>
+    <div class="prompt">TAP OR CLICK TO START</div>
   </div>
-  <h1>Legend presents</h1>
-  <div class="title">Fee Dodge</div>
-  <div class="prompt">TAP OR CLICK TO START</div>
 </div>
 
 <canvas id="game"></canvas>
@@ -91,6 +97,168 @@
     </a>
   </div>
 </div>
+
+<script>
+// --- START SCREEN: Dark room / flashlight reveal ---
+(function startScreenFX() {
+  const sc = document.getElementById('start-canvas');
+  const sctx = sc.getContext('2d');
+  let sw, sh;
+  function sResize() { sw = sc.width = window.innerWidth; sh = sc.height = window.innerHeight; }
+  sResize();
+  window.addEventListener('resize', sResize);
+
+  const mouse = { x: -999, y: -999, active: false };
+  const startEl = document.getElementById('start-screen');
+
+  startEl.addEventListener('mousemove', (e) => { mouse.x = e.clientX; mouse.y = e.clientY; mouse.active = true; });
+  startEl.addEventListener('touchmove', (e) => { mouse.x = e.touches[0].clientX; mouse.y = e.touches[0].clientY; mouse.active = true; }, { passive: true });
+  startEl.addEventListener('touchstart', (e) => { mouse.x = e.touches[0].clientX; mouse.y = e.touches[0].clientY; mouse.active = true; }, { passive: true });
+
+  const PREVIEW_FEES = [
+    '$4.86 ATM Fee', '$26.77 Overdraft', '$13.95 Monthly Fee', '$35 Wire Fee',
+    '$2.50 Paper Fee', '$5 Inactivity Fee', '3% Foreign Txn', '$12 Acct Analysis',
+    '$15 Returned Item', '$25 Stop Payment', 'Fine Print Fee', '$10 Low Balance',
+    '$7.50 Check Fee', '$30 Cashier Check', '$3 Statement Fee', '$8 ACH Return'
+  ];
+
+  const ghosts = [];
+  for (let i = 0; i < 14; i++) {
+    const label = PREVIEW_FEES[i % PREVIEW_FEES.length];
+    ghosts.push({
+      x: Math.random() * 2000 - 200,
+      y: 60 + Math.random() * (sh - 120),
+      w: 90 + label.length * 5,
+      h: 26,
+      vx: (Math.random() > 0.5 ? 1 : -1) * (0.15 + Math.random() * 0.35),
+      vy: (Math.random() - 0.5) * 0.1,
+      label,
+    });
+  }
+
+  // grid lines
+  const gridLines = [];
+  for (let x = 0; x < 2000; x += 40) gridLines.push({ x1: x, y1: 0, x2: x, y2: 2000, vert: true });
+  for (let y = 0; y < 2000; y += 40) gridLines.push({ x1: 0, y1: y, x2: 2000, y2: y, vert: false });
+
+  let gridOff = 0;
+  let frame = 0;
+  let ambientAngle = 0;
+
+  function sDraw() {
+    if (startEl.classList.contains('hidden')) return;
+    frame++;
+    gridOff = (gridOff + 0.15) % 40;
+
+    // ambient mouse for mobile / no-mouse
+    if (!mouse.active) {
+      ambientAngle += 0.003;
+      mouse.x = sw / 2 + Math.cos(ambientAngle) * sw * 0.15;
+      mouse.y = sh / 2 + Math.sin(ambientAngle * 0.7) * sh * 0.1;
+    }
+
+    sctx.fillStyle = '#000';
+    sctx.fillRect(0, 0, sw, sh);
+
+    const lightR = 220;
+
+    // grid revealed by light
+    sctx.save();
+    for (const line of gridLines) {
+      const lx = line.vert ? line.x1 : mouse.x;
+      const ly = line.vert ? mouse.y : (line.y1 + gridOff) % sh;
+      const actualX = line.vert ? line.x1 : 0;
+      const actualY = line.vert ? 0 : (line.y1 + gridOff) % sh;
+
+      if (line.vert) {
+        const dist = Math.abs(line.x1 - mouse.x);
+        if (dist > lightR) continue;
+        const alpha = (1 - dist / lightR) * 0.06;
+        sctx.strokeStyle = `rgba(120,255,180,${alpha})`;
+        sctx.lineWidth = 0.5;
+        sctx.beginPath();
+        sctx.moveTo(line.x1, 0);
+        sctx.lineTo(line.x1, sh);
+        sctx.stroke();
+      } else {
+        const yPos = (line.y1 + gridOff) % sh;
+        const dist = Math.abs(yPos - mouse.y);
+        if (dist > lightR) continue;
+        const alpha = (1 - dist / lightR) * 0.06;
+        sctx.strokeStyle = `rgba(120,255,180,${alpha})`;
+        sctx.lineWidth = 0.5;
+        sctx.beginPath();
+        sctx.moveTo(0, yPos);
+        sctx.lineTo(sw, yPos);
+        sctx.stroke();
+      }
+    }
+    sctx.restore();
+
+    // ghost fees revealed by light
+    for (const g of ghosts) {
+      g.x += g.vx;
+      g.y += g.vy;
+      if (g.x > sw + 100) g.x = -g.w - 20;
+      if (g.x < -g.w - 100) g.x = sw + 20;
+      if (g.y < 30 || g.y > sh - 30) g.vy *= -1;
+
+      const cx = g.x + g.w / 2;
+      const cy = g.y + g.h / 2;
+      const dist = Math.sqrt((cx - mouse.x) ** 2 + (cy - mouse.y) ** 2);
+      if (dist > lightR + 40) continue;
+
+      const reveal = Math.max(0, 1 - dist / lightR);
+      const alpha = reveal * 0.55;
+
+      sctx.globalAlpha = alpha;
+      sctx.fillStyle = `rgba(255,60,60,0.08)`;
+      sctx.strokeStyle = `rgba(255,70,70,${alpha * 0.6})`;
+      sctx.lineWidth = 1;
+      sctx.beginPath();
+      const r = 3;
+      sctx.moveTo(g.x + r, g.y);
+      sctx.lineTo(g.x + g.w - r, g.y); sctx.arcTo(g.x + g.w, g.y, g.x + g.w, g.y + r, r);
+      sctx.lineTo(g.x + g.w, g.y + g.h - r); sctx.arcTo(g.x + g.w, g.y + g.h, g.x + g.w - r, g.y + g.h, r);
+      sctx.lineTo(g.x + r, g.y + g.h); sctx.arcTo(g.x, g.y + g.h, g.x, g.y + g.h - r, r);
+      sctx.lineTo(g.x, g.y + r); sctx.arcTo(g.x, g.y, g.x + r, g.y, r);
+      sctx.closePath();
+      sctx.fill();
+      sctx.stroke();
+
+      sctx.fillStyle = `rgba(255,70,70,${alpha})`;
+      sctx.font = `bold ${sw < 500 ? 8 : 10}px monospace`;
+      sctx.textAlign = 'center';
+      sctx.textBaseline = 'middle';
+      sctx.fillText(g.label, cx, cy);
+      sctx.globalAlpha = 1;
+    }
+
+    // soft radial light at mouse
+    const grd = sctx.createRadialGradient(mouse.x, mouse.y, 0, mouse.x, mouse.y, lightR);
+    grd.addColorStop(0, 'rgba(120,255,180,0.04)');
+    grd.addColorStop(0.4, 'rgba(120,255,180,0.015)');
+    grd.addColorStop(1, 'rgba(120,255,180,0)');
+    sctx.fillStyle = grd;
+    sctx.fillRect(0, 0, sw, sh);
+
+    // tiny player preview at mouse position
+    if (mouse.active) {
+      sctx.beginPath();
+      sctx.arc(mouse.x, mouse.y, 6, 0, Math.PI * 2);
+      sctx.fillStyle = 'rgba(120,255,180,0.15)';
+      sctx.fill();
+      sctx.beginPath();
+      sctx.arc(mouse.x, mouse.y, 3, 0, Math.PI * 2);
+      sctx.fillStyle = 'rgba(120,255,180,0.3)';
+      sctx.fill();
+    }
+
+    requestAnimationFrame(sDraw);
+  }
+  requestAnimationFrame(sDraw);
+})();
+</script>
 
 <script>
 const canvas = document.getElementById('game');
