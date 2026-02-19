@@ -128,6 +128,22 @@
   .share-actions button:hover { border-color: #888; color: #fff; }
   .share-actions .primary-share { background: rgba(120,255,180,0.05); border-color: rgba(120,255,180,0.2); color: #5a9; }
   .share-actions .primary-share:hover { background: rgba(120,255,180,0.12); border-color: #78FFB4; color: #78FFB4; }
+  /* end run button (legend mode) */
+  #end-run-btn {
+    display: none; position: fixed; bottom: 20px; right: 20px; z-index: 8;
+    padding: 10px 20px; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px);
+    border: 1px solid rgba(120,255,180,0.2); border-radius: 4px;
+    font-family: 'Mono'; font-size: 9px; letter-spacing: 3px; text-transform: uppercase;
+    color: #78FFB4; cursor: pointer; transition: all 0.3s;
+    animation: breathe 3s ease-in-out infinite;
+  }
+  #end-run-btn:hover { background: rgba(120,255,180,0.08); border-color: #78FFB4; color: #fff; }
+
+  /* legend victory screen */
+  .death-inner.victory .label-tag { color: #78FFB4; }
+  .death-inner.victory .big-stat em { color: #78FFB4; }
+  .death-inner.victory .sub-stat em { color: #FFD700; }
+
   #share-toast { position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%); background: rgba(120,255,180,0.1); border: 1px solid rgba(120,255,180,0.2); color: #78FFB4; padding: 10px 28px; border-radius: 6px; font-family: 'Mono'; font-size: 11px; letter-spacing: 2px; z-index: 50; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
   #share-toast.visible { opacity: 1; }
 
@@ -251,6 +267,7 @@
 </div>
 
 <canvas id="game"></canvas>
+<button id="end-run-btn">End Run</button>
 
 <!-- ============ DEATH SCREEN ============ -->
 <div id="death-screen">
@@ -492,12 +509,19 @@
   };
 
   function check() {
-    if (leftActive && rightActive && !window._legendMode) {
-      window._legendMode = true;
-      playLegendUnlock();
-      toast.classList.add('visible');
-      document.body.style.setProperty('--legend-mode', '1');
-      setTimeout(() => toast.classList.remove('visible'), 3000);
+    if (leftActive && rightActive) {
+      if (!window._legendMode) {
+        window._legendMode = true;
+        playLegendUnlock();
+        toast.classList.add('visible');
+        document.body.style.setProperty('--legend-mode', '1');
+        setTimeout(() => toast.classList.remove('visible'), 3000);
+      }
+    } else {
+      if (window._legendMode) {
+        window._legendMode = false;
+        document.body.style.removeProperty('--legend-mode');
+      }
     }
   }
 
@@ -563,6 +587,7 @@ let gameState='start',shakeAmount=0,flashAmount=0;
 let particles=[],trailPoints=[];
 let nearMissTimer=0,nearMissCount=0,gridOffset=0,dodgedCount=0,dodgeStreak=0;
 let hitShrink=0,bestYears=parseFloat(localStorage.getItem('fd_best')||'0');
+let legendFeesSmashed=0,legendFeesValue=0,legendRunStart=0;
 const pt={x:0,y:0};
 
 function initGame(){
@@ -571,7 +596,9 @@ function initGame(){
   balance=100;distance=0;gameSpeed=1.5;frameCount=0;
   totalFeesHit=0;feesHitMap={};shakeAmount=0;flashAmount=0;
   nearMissTimer=0;nearMissCount=0;dodgedCount=0;dodgeStreak=0;hitShrink=0;
+  legendFeesSmashed=0;legendFeesValue=0;legendRunStart=Date.now();
   gameState='playing';initAudio();
+  document.getElementById('end-run-btn').style.display='none';
 }
 
 function spawnOb(){
@@ -598,7 +625,21 @@ document.getElementById('start-screen').addEventListener('click',()=>{
   setTimeout(()=>{document.getElementById('start-screen').style.display='none';},500);
   initGame();
 });
-document.getElementById('retry-btn').addEventListener('click',()=>{document.getElementById('death-screen').classList.remove('visible');initGame();});
+document.getElementById('retry-btn').addEventListener('click',()=>{
+  document.getElementById('death-screen').classList.remove('visible');
+  const inner = document.querySelector('.death-inner');
+  inner.classList.remove('victory');
+  inner.querySelector('.label-tag').textContent = 'Game Over';
+  inner.querySelector('.big-stat').innerHTML = 'You survived <em id="ds-years">0</em> years';
+  inner.querySelector('.sub-stat').innerHTML = 'Lost <em id="ds-total">$0</em> to fees';
+  document.getElementById('ds-editorial').innerHTML = 'The average American pays $138,000+ in banking fees over a lifetime. On Legend: $0.';
+  initGame();
+});
+document.getElementById('end-run-btn').addEventListener('click',()=>{
+  gameState='dead';
+  document.getElementById('end-run-btn').style.display='none';
+  showVictory();
+});
 
 function getYears(){return(distance/800).toFixed(1);}
 function balColor(b){
@@ -635,8 +676,8 @@ function update(){
       if(!ob.nearMissed&&dq<(pr+16)*(pr+16)&&dq>pr*pr){ob.nearMissed=true;nearMissTimer=18;nearMissCount++;spawnSparks(cx,cy);playNM();}
       if(dq<pr*pr){
         if(window._legendMode){
-          // SMASH — invincible, knock fee away with physics
           ob.hit=true; dodgedCount++; dodgeStreak++;
+          legendFeesSmashed++; legendFeesValue+=ob.value;
           const smashDx=ob.x+ob.w/2-player.x, smashDy=ob.y+ob.h/2-player.y;
           const smashDist=Math.sqrt(smashDx*smashDx+smashDy*smashDy)||1;
           ob.vx=(smashDx/smashDist)*18; ob.vy=(smashDy/smashDist)*18;
@@ -655,6 +696,12 @@ function update(){
   }
   particles=particles.filter(p=>{p.x+=p.vx;p.y+=p.vy;p.life-=p.spark?0.045:0.022;p.vx*=0.94;p.vy*=p.spark?0.9:0.95;if(p.spark)p.vy+=0.12;return p.life>0;});
   shakeAmount*=0.8;flashAmount*=0.82;
+
+  // show End Run button after 30s in Legend Mode
+  if(window._legendMode && gameState==='playing' && (Date.now()-legendRunStart)>30000){
+    const btn=document.getElementById('end-run-btn');
+    if(btn.style.display==='none') btn.style.display='block';
+  }
 }
 
 function rr(c,x,y,w,h,r){if(c.roundRect){c.roundRect(x,y,w,h,r);return;}c.moveTo(x+r,y);c.lineTo(x+w-r,y);c.arcTo(x+w,y,x+w,y+r,r);c.lineTo(x+w,y+h-r);c.arcTo(x+w,y+h,x+w-r,y+h,r);c.lineTo(x+r,y+h);c.arcTo(x,y+h,x,y+h-r,r);c.lineTo(x,y+r);c.arcTo(x,y,x+r,y,r);c.closePath();}
@@ -843,6 +890,20 @@ document.getElementById('challenge-btn').addEventListener('click',showShareCard)
 document.getElementById('share-copy-btn').addEventListener('click',()=>{navigator.clipboard.writeText(challengeUrl()).then(()=>{const t=document.getElementById('share-toast');t.textContent='Challenge link copied!';t.classList.add('visible');setTimeout(()=>t.classList.remove('visible'),2200);}).catch(()=>prompt('Copy this:',challengeUrl()));});
 document.getElementById('share-save-btn').addEventListener('click',()=>{const a=document.createElement('a');a.download='fee-dodge-'+getYears()+'yrs.png';a.href=document.getElementById('share-card').toDataURL('image/png');a.click();});
 document.getElementById('share-close-btn').addEventListener('click',()=>{document.getElementById('share-card-wrap').classList.remove('visible');});
+
+function showVictory(){
+  const inner = document.querySelector('.death-inner');
+  inner.classList.add('victory');
+  document.getElementById('ds-years').textContent = getYears();
+  document.getElementById('ds-total').textContent = '$' + legendFeesValue.toFixed(2);
+  document.querySelector('.death-inner .label-tag').textContent = 'Legend Mode Complete';
+  document.querySelector('.death-inner .big-stat').innerHTML = 'You avoided <em>$' + legendFeesValue.toFixed(2) + '</em> in fees';
+  document.querySelector('.death-inner .sub-stat').innerHTML = 'Smashed <em>' + legendFeesSmashed + '</em> fees in ' + getYears() + ' years';
+  document.getElementById('ds-fees').innerHTML = '';
+  document.getElementById('ds-editorial').innerHTML = 'With Legend, fees don\'t touch you. That\'s not a game — that\'s how it actually works.';
+  inner.querySelectorAll(':scope > *').forEach((el,i)=>{el.style.animation='none';el.offsetHeight;el.style.animation=`fsi 0.5s ease-out ${i*0.08}s forwards`;});
+  setTimeout(()=>document.getElementById('death-screen').classList.add('visible'),400);
+}
 
 function showDeath(){
   const y=parseFloat(getYears());if(y>bestYears){bestYears=y;localStorage.setItem('fd_best',String(bestYears));}
