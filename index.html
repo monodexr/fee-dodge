@@ -13,169 +13,176 @@
   @font-face { font-family: 'Knapp'; src: url('fonts/Knapp-Light.otf') format('opentype'); font-weight: 300; font-style: normal; font-display: swap; }
   @font-face { font-family: 'Knapp'; src: url('fonts/Knapp-Regular.otf') format('opentype'); font-weight: 400; font-style: normal; font-display: swap; }
   @font-face { font-family: 'Knapp'; src: url('fonts/Knapp-Medium.otf') format('opentype'); font-weight: 500; font-style: normal; font-display: swap; }
-  @font-face { font-family: 'DiatypeMono'; src: url('fonts/PPNeueMontrealMono-Regular.otf') format('opentype'); font-weight: 400; font-style: normal; font-display: swap; }
-  @font-face { font-family: 'DiatypeMono'; src: url('fonts/PPNeueMontrealMono-Medium.otf') format('opentype'); font-weight: 500; font-style: normal; font-display: swap; }
-  @font-face { font-family: 'DiatypeMono'; src: url('fonts/PPNeueMontrealMono-Bold.otf') format('opentype'); font-weight: 700; font-style: normal; font-display: swap; }
+  @font-face { font-family: 'Mono'; src: url('fonts/PPNeueMontrealMono-Regular.otf') format('opentype'); font-weight: 400; font-style: normal; font-display: swap; }
+  @font-face { font-family: 'Mono'; src: url('fonts/PPNeueMontrealMono-Medium.otf') format('opentype'); font-weight: 500; font-style: normal; font-display: swap; }
+  @font-face { font-family: 'Mono'; src: url('fonts/PPNeueMontrealMono-Bold.otf') format('opentype'); font-weight: 700; font-style: normal; font-display: swap; }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html, body {
     width: 100%; height: 100%; overflow: hidden; background: #000;
-    font-family: 'Knapp', -apple-system, BlinkMacSystemFont, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+    font-family: 'Knapp', -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
   }
   canvas { display: block; }
 
-  /* --- START SCREEN --- */
+  /* ---- START SCREEN ---- */
   #start-screen {
     position: fixed; inset: 0; background: #000;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
     z-index: 20; color: #fff; cursor: pointer; overflow: hidden;
-    transition: opacity 0.4s ease-out;
+    transition: opacity 0.5s ease-out;
   }
   #start-screen.hidden { opacity: 0; pointer-events: none; }
   #start-canvas { position: absolute; inset: 0; z-index: 0; }
-  .start-content {
-    position: relative; z-index: 1;
-    display: flex; flex-direction: column; align-items: center; gap: 8px;
-    pointer-events: none;
-  }
-  .start-content .legend-mark { margin-bottom: 24px; opacity: 0.6; }
-  .start-content .legend-mark svg { width: 32px; height: 32px; }
-  .start-content .presents { font-family: 'DiatypeMono', monospace; font-size: 10px; letter-spacing: 6px; text-transform: uppercase; color: #444; }
-  .start-content .title {
-    font-family: 'Knapp', sans-serif; font-weight: 500;
-    font-size: clamp(40px, 8vw, 64px); letter-spacing: -0.5px;
-    color: #fff; margin: 8px 0 4px;
-    text-shadow: 0 0 60px rgba(120,255,180,0.08);
-  }
-  .start-content .prompt {
-    font-family: 'DiatypeMono', monospace;
-    font-size: 11px; color: #555; letter-spacing: 4px; text-transform: uppercase;
-    margin-top: 28px; animation: breathe 4s ease-in-out infinite;
-  }
-  @keyframes breathe { 0%,100% { opacity: 0.2; } 50% { opacity: 0.75; } }
-  .challenge-intro { text-align: center; margin: 16px 0 0; }
-  .challenge-intro .challenger { font-family: 'DiatypeMono', monospace; font-size: 11px; color: #555; letter-spacing: 4px; text-transform: uppercase; }
-  .challenge-intro .challenge-score { font-family: 'Knapp', sans-serif; font-size: 48px; font-weight: 300; color: #ff4444; margin: 6px 0; line-height: 1; }
-  .challenge-intro .challenge-dare { font-family: 'Knapp', sans-serif; font-size: 15px; color: #777; font-weight: 400; }
 
-  /* --- DEATH SCREEN --- */
+  /* top bar */
+  .top-bar {
+    position: absolute; top: 28px; left: 0; right: 0; z-index: 2;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+  }
+  .top-bar svg { height: 18px; width: auto; }
+  .top-bar .wordmark { font-family: 'Mono', monospace; font-size: 13px; font-weight: 500; letter-spacing: 5px; color: #fff; text-transform: uppercase; }
+
+  /* center content */
+  .start-center {
+    position: relative; z-index: 1; display: flex; flex-direction: column;
+    align-items: center; pointer-events: none; margin-top: -60px;
+  }
+  .start-center .presents {
+    font-family: 'Mono', monospace; font-size: 10px; letter-spacing: 6px;
+    text-transform: uppercase; color: #555; margin-bottom: 12px;
+  }
+  .title-stack { position: relative; height: clamp(60px, 10vw, 90px); margin-bottom: 8px; }
+  .title-stack .title-layer {
+    font-family: 'Knapp', sans-serif; font-weight: 500;
+    font-size: clamp(52px, 9vw, 88px); letter-spacing: 2px; text-transform: uppercase;
+    position: absolute; left: 50%; white-space: nowrap;
+    transform: translateX(-50%);
+  }
+  .title-stack .t0 { color: #fff; z-index: 4; bottom: 0; }
+  .title-stack .t1 { color: rgba(255,255,255,0.12); z-index: 3; bottom: 10px; clip-path: inset(0 0 18% 0); }
+  .title-stack .t2 { color: rgba(255,255,255,0.06); z-index: 2; bottom: 18px; clip-path: inset(0 0 36% 0); }
+  .title-stack .t3 { color: rgba(255,255,255,0.025); z-index: 1; bottom: 24px; clip-path: inset(0 0 52% 0); }
+
+  .start-center .prompt {
+    font-family: 'Mono', monospace; font-size: 11px; letter-spacing: 4px;
+    text-transform: uppercase; color: #D4883A; margin-top: 16px;
+    animation: breathe 4s ease-in-out infinite;
+  }
+  @keyframes breathe { 0%,100% { opacity: 0.25; } 50% { opacity: 0.85; } }
+
+  .challenge-intro { text-align: center; margin: 14px 0 0; }
+  .challenge-intro .challenger { font-family: 'Mono', monospace; font-size: 11px; color: #555; letter-spacing: 4px; text-transform: uppercase; }
+  .challenge-intro .challenge-score { font-family: 'Knapp'; font-size: 48px; font-weight: 300; color: #ff4444; margin: 4px 0; line-height: 1; }
+  .challenge-intro .challenge-dare { font-family: 'Knapp'; font-size: 15px; color: #777; font-weight: 400; }
+
+  /* corner icons */
+  .corner-icon {
+    position: absolute; bottom: 20px; z-index: 3; width: 44px; height: 44px;
+    border-radius: 10px; display: flex; align-items: center; justify-content: center;
+    cursor: pointer; pointer-events: auto; transition: all 0.35s ease;
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  .corner-icon svg { width: 22px; height: 22px; transition: all 0.35s ease; }
+  .corner-icon.left { left: 20px; background: rgba(255,255,255,0.03); }
+  .corner-icon.right { right: 20px; background: rgba(255,255,255,0.03); }
+  .corner-icon.active { background: rgba(120,255,180,0.1); border-color: rgba(120,255,180,0.3); }
+  .corner-icon.active svg { filter: drop-shadow(0 0 6px rgba(120,255,180,0.4)); }
+  .corner-icon:hover { border-color: rgba(255,255,255,0.2); transform: scale(1.08); }
+
+  #legend-mode-toast {
+    position: absolute; bottom: 80px; left: 50%; transform: translateX(-50%);
+    z-index: 5; font-family: 'Mono', monospace; font-size: 10px; letter-spacing: 4px;
+    text-transform: uppercase; color: #78FFB4; opacity: 0;
+    transition: opacity 0.5s; pointer-events: none;
+    text-shadow: 0 0 20px rgba(120,255,180,0.3);
+  }
+  #legend-mode-toast.visible { opacity: 1; }
+
+  /* ---- DEATH SCREEN ---- */
   #death-screen {
     display: none; position: fixed; inset: 0;
-    background: rgba(0,0,0,0.96);
+    background: rgba(0,0,0,0.97); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
     flex-direction: column; align-items: center; justify-content: center;
-    z-index: 10; color: #fff; gap: 0; padding: 24px;
-    overflow-y: auto;
+    z-index: 10; color: #fff; padding: 24px; overflow-y: auto;
   }
   #death-screen.visible { display: flex; }
-  #death-screen .death-inner {
-    display: flex; flex-direction: column; align-items: center; gap: 0;
-    max-width: 420px; width: 100%;
+  .death-inner { display: flex; flex-direction: column; align-items: center; max-width: 420px; width: 100%; }
+  .death-inner > * { opacity: 0; transform: translateY(10px); animation: fsi 0.5s ease-out forwards; }
+  @keyframes fsi { to { opacity: 1; transform: translateY(0); } }
+  .death-inner .label-tag { font-family: 'Mono'; font-size: 10px; letter-spacing: 5px; text-transform: uppercase; color: #444; margin-bottom: 12px; animation-delay: 0s; }
+  .death-inner .big-stat { font-family: 'Knapp'; font-size: clamp(40px, 10vw, 52px); font-weight: 300; color: #fff; line-height: 1; animation-delay: 0.08s; }
+  .death-inner .big-stat em { font-style: normal; color: #ff3b3b; }
+  .death-inner .sub-stat { font-family: 'Knapp'; font-size: 20px; font-weight: 300; color: #888; margin-top: 8px; animation-delay: 0.16s; }
+  .death-inner .sub-stat em { font-style: normal; color: #ff3b3b; }
+  .death-inner .fees-list { font-family: 'Mono'; margin-top: 18px; font-size: 11px; color: #333; text-align: left; line-height: 2; animation-delay: 0.24s; }
+  .death-inner .fees-list span { color: #ff3b3b; font-weight: 700; }
+  .death-inner .editorial { font-family: 'Knapp'; font-size: 13px; font-weight: 400; color: #3a3a3a; margin-top: 18px; text-align: center; line-height: 1.6; max-width: 360px; animation-delay: 0.32s; }
+  .death-inner .actions-row { display: flex; gap: 10px; margin-top: 22px; flex-wrap: wrap; justify-content: center; animation-delay: 0.4s; }
+  .death-inner button {
+    padding: 11px 26px; background: transparent; border: 1px solid #222;
+    color: #666; font-family: 'Mono'; font-size: 10px; letter-spacing: 3px;
+    text-transform: uppercase; cursor: pointer; transition: all 0.25s; border-radius: 2px;
   }
-  #death-screen .death-inner > * {
-    opacity: 0; transform: translateY(12px);
-    animation: fadeSlideIn 0.5s ease-out forwards;
-  }
-  @keyframes fadeSlideIn { to { opacity: 1; transform: translateY(0); } }
-  #death-screen .label-tag {
-    font-family: 'DiatypeMono', monospace;
-    font-size: 10px; letter-spacing: 5px; text-transform: uppercase; color: #444;
-    margin-bottom: 12px; animation-delay: 0s;
-  }
-  #death-screen .big-stat {
-    font-family: 'Knapp', sans-serif;
-    font-size: clamp(42px, 10vw, 56px); font-weight: 300; color: #fff; line-height: 1;
-    animation-delay: 0.08s;
-  }
-  #death-screen .big-stat em { font-style: normal; color: #ff3b3b; }
-  #death-screen .sub-stat {
-    font-family: 'Knapp', sans-serif;
-    font-size: 22px; font-weight: 300; color: #999; margin-top: 8px;
-    animation-delay: 0.16s;
-  }
-  #death-screen .sub-stat em { font-style: normal; color: #ff3b3b; }
-  #death-screen .fees-list {
-    font-family: 'DiatypeMono', monospace;
-    margin-top: 20px; font-size: 11px; color: #3a3a3a; text-align: left; line-height: 2;
-    animation-delay: 0.24s;
-  }
-  #death-screen .fees-list span { color: #ff3b3b; font-weight: 700; }
-  #death-screen .editorial {
-    font-family: 'Knapp', sans-serif;
-    font-size: 13px; font-weight: 400; color: #444; margin-top: 20px; text-align: center; line-height: 1.6;
-    max-width: 360px; animation-delay: 0.32s;
-  }
-  #death-screen .actions-row {
-    display: flex; gap: 10px; margin-top: 24px; align-items: center;
-    flex-wrap: wrap; justify-content: center; animation-delay: 0.4s;
-  }
-  #death-screen button {
-    padding: 11px 28px; background: transparent; border: 1px solid #282828;
-    color: #666; font-family: 'DiatypeMono', monospace; font-size: 11px;
-    letter-spacing: 3px; text-transform: uppercase;
-    cursor: pointer; transition: all 0.25s ease; border-radius: 2px;
-  }
-  #death-screen button:hover { border-color: #666; color: #ccc; }
-  #challenge-btn { background: rgba(120,255,180,0.04); border-color: rgba(120,255,180,0.2); color: #5a9; }
+  .death-inner button:hover { border-color: #555; color: #ccc; }
+  #challenge-btn { background: rgba(120,255,180,0.04); border-color: rgba(120,255,180,0.15); color: #5a9; }
   #challenge-btn:hover { background: rgba(120,255,180,0.1); border-color: #78FFB4; color: #78FFB4; }
-  #death-screen .legend-footer {
-    display: flex; flex-direction: column; align-items: center; gap: 10px;
-    margin-top: 32px; animation-delay: 0.5s;
-  }
-  .legend-footer .legend-wordmark { opacity: 0.35; }
-  .legend-footer .legend-wordmark svg { height: 16px; width: auto; }
-  .legend-footer .cta-text { font-family: 'DiatypeMono', monospace; font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: #3a3a3a; }
+  .legend-footer { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-top: 28px; animation-delay: 0.5s; }
+  .legend-footer .legend-wordmark { opacity: 0.3; }
+  .legend-footer .legend-wordmark svg { height: 15px; width: auto; }
+  .legend-footer .cta-text { font-family: 'Mono'; font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: #333; }
   .legend-footer .app-store-link { display: inline-block; transition: opacity 0.2s; }
-  .legend-footer .app-store-link:hover { opacity: 0.75; }
-  .legend-footer .app-store-link img { height: 40px; width: auto; border-radius: 6px; }
+  .legend-footer .app-store-link:hover { opacity: 0.7; }
+  .legend-footer .app-store-link img { height: 38px; width: auto; border-radius: 6px; }
 
-  /* --- SHARE CARD --- */
-  #share-card-wrap {
-    display: none; position: fixed; inset: 0; z-index: 40;
-    background: rgba(0,0,0,0.97);
-    flex-direction: column; align-items: center; justify-content: center; gap: 20px;
-  }
+  /* ---- SHARE ---- */
+  #share-card-wrap { display: none; position: fixed; inset: 0; z-index: 40; background: rgba(0,0,0,0.97); flex-direction: column; align-items: center; justify-content: center; gap: 18px; }
   #share-card-wrap.visible { display: flex; }
   #share-card-wrap canvas { border-radius: 10px; max-width: 92vw; max-height: 55vh; box-shadow: 0 4px 40px rgba(0,0,0,0.5); }
   .share-actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
-  .share-actions button {
-    padding: 10px 22px; background: transparent; border: 1px solid #282828;
-    color: #666; font-family: 'DiatypeMono', monospace; font-size: 10px; letter-spacing: 2px;
-    text-transform: uppercase; cursor: pointer; transition: all 0.2s; border-radius: 2px;
-  }
+  .share-actions button { padding: 10px 22px; background: transparent; border: 1px solid #222; color: #666; font-family: 'Mono'; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; transition: all 0.2s; border-radius: 2px; }
   .share-actions button:hover { border-color: #888; color: #fff; }
-  .share-actions .primary-share { background: rgba(120,255,180,0.05); border-color: rgba(120,255,180,0.25); color: #5a9; }
+  .share-actions .primary-share { background: rgba(120,255,180,0.05); border-color: rgba(120,255,180,0.2); color: #5a9; }
   .share-actions .primary-share:hover { background: rgba(120,255,180,0.12); border-color: #78FFB4; color: #78FFB4; }
-  #share-toast {
-    position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%);
-    background: rgba(120,255,180,0.1); border: 1px solid rgba(120,255,180,0.25);
-    color: #78FFB4; padding: 10px 28px; border-radius: 6px;
-    font-family: 'DiatypeMono', monospace; font-size: 11px; letter-spacing: 2px;
-    z-index: 50; opacity: 0; transition: opacity 0.3s; pointer-events: none;
-  }
+  #share-toast { position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%); background: rgba(120,255,180,0.1); border: 1px solid rgba(120,255,180,0.2); color: #78FFB4; padding: 10px 28px; border-radius: 6px; font-family: 'Mono'; font-size: 11px; letter-spacing: 2px; z-index: 50; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
   #share-toast.visible { opacity: 1; }
 </style>
 </head>
 <body>
 
+<!-- ============ START SCREEN ============ -->
 <div id="start-screen">
   <canvas id="start-canvas"></canvas>
-  <div class="start-content">
-    <div class="legend-mark">
-      <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M19.969 40C26.47 40 32.217 36.952 35.864 32.175C35.99 32.009 36.054 31.926 36.081 31.826C36.103 31.741 36.103 31.639 36.081 31.554C36.054 31.454 35.991 31.371 35.864 31.205C32.217 26.426 26.471 23.349 20 23.349C13.529 23.349 7.783 26.426 4.136 31.205C4.009 31.371 3.946 31.454 3.919 31.554C3.897 31.639 3.897 31.741 3.919 31.826C3.946 31.926 4.009 32.009 4.136 32.175C7.783 36.952 13.528 40 19.969 40ZM19.969 0C8.947 0 0 8.961 0 20C0 23.533 0.906 26.819 2.511 29.702C2.609 29.877 2.658 29.965 2.729 30.001C2.79 30.032 2.865 30.038 2.93 30.017C3.006 29.992 3.069 29.912 3.196 29.75L19.338 9.185C19.564 8.897 19.677 8.753 19.814 8.701C19.934 8.656 20.066 8.656 20.186 8.701C20.324 8.753 20.437 8.897 20.662 9.185L36.804 29.75C36.931 29.912 36.994 29.992 37.07 30.017C37.136 30.038 37.21 30.032 37.271 30.001C37.343 29.965 37.391 29.877 37.489 29.702C39.094 26.819 40 23.533 40 20C40 8.961 31.053 0 19.969 0Z" fill="white"/>
-      </svg>
+
+  <div class="top-bar">
+    <svg viewBox="0 0 40 40" fill="none"><path d="M19.969 40C26.47 40 32.217 36.952 35.864 32.175C35.99 32.009 36.054 31.926 36.081 31.826C36.103 31.741 36.103 31.639 36.081 31.554C36.054 31.454 35.991 31.371 35.864 31.205C32.217 26.426 26.471 23.349 20 23.349C13.529 23.349 7.783 26.426 4.136 31.205C4.009 31.371 3.946 31.454 3.919 31.554C3.897 31.639 3.897 31.741 3.919 31.826C3.946 31.926 4.009 32.009 4.136 32.175C7.783 36.952 13.528 40 19.969 40ZM19.969 0C8.947 0 0 8.961 0 20C0 23.533 0.906 26.819 2.511 29.702C2.609 29.877 2.658 29.965 2.729 30.001C2.79 30.032 2.865 30.038 2.93 30.017C3.006 29.992 3.069 29.912 3.196 29.75L19.338 9.185C19.564 8.897 19.677 8.753 19.814 8.701C19.934 8.656 20.066 8.656 20.186 8.701C20.324 8.753 20.437 8.897 20.662 9.185L36.804 29.75C36.931 29.912 36.994 29.992 37.07 30.017C37.136 30.038 37.21 30.032 37.271 30.001C37.343 29.965 37.391 29.877 37.489 29.702C39.094 26.819 40 23.533 40 20C40 8.961 31.053 0 19.969 0Z" fill="white"/></svg>
+    <span class="wordmark">Legend</span>
+  </div>
+
+  <div class="start-center">
+    <div class="presents">Presents</div>
+    <div class="title-stack">
+      <div class="title-layer t3">FEE DODGE</div>
+      <div class="title-layer t2">FEE DODGE</div>
+      <div class="title-layer t1">FEE DODGE</div>
+      <div class="title-layer t0">FEE DODGE</div>
     </div>
-    <div class="presents">Legend presents</div>
-    <div class="title">Fee Dodge</div>
     <div id="challenge-intro" class="challenge-intro" style="display:none;"></div>
     <div class="prompt" id="start-prompt">TAP OR CLICK TO START</div>
   </div>
+
+  <div class="corner-icon left" id="icon-left">
+    <svg viewBox="0 0 40 40" fill="none"><path d="M19.969 40C26.47 40 32.217 36.952 35.864 32.175C35.99 32.009 36.054 31.926 36.081 31.826C36.103 31.741 36.103 31.639 36.081 31.554C36.054 31.454 35.991 31.371 35.864 31.205C32.217 26.426 26.471 23.349 20 23.349C13.529 23.349 7.783 26.426 4.136 31.205C4.009 31.371 3.946 31.454 3.919 31.554C3.897 31.639 3.897 31.741 3.919 31.826C3.946 31.926 4.009 32.009 4.136 32.175C7.783 36.952 13.528 40 19.969 40ZM19.969 0C8.947 0 0 8.961 0 20C0 23.533 0.906 26.819 2.511 29.702C2.609 29.877 2.658 29.965 2.729 30.001C2.79 30.032 2.865 30.038 2.93 30.017C3.006 29.992 3.069 29.912 3.196 29.75L19.338 9.185C19.564 8.897 19.677 8.753 19.814 8.701C19.934 8.656 20.066 8.656 20.186 8.701C20.324 8.753 20.437 8.897 20.662 9.185L36.804 29.75C36.931 29.912 36.994 29.992 37.07 30.017C37.136 30.038 37.21 30.032 37.271 30.001C37.343 29.965 37.391 29.877 37.489 29.702C39.094 26.819 40 23.533 40 20C40 8.961 31.053 0 19.969 0Z" fill="#555"/></svg>
+  </div>
+  <div class="corner-icon right" id="icon-right">
+    <svg viewBox="0 0 40 40" fill="none"><path d="M19.969 40C26.47 40 32.217 36.952 35.864 32.175C35.99 32.009 36.054 31.926 36.081 31.826C36.103 31.741 36.103 31.639 36.081 31.554C36.054 31.454 35.991 31.371 35.864 31.205C32.217 26.426 26.471 23.349 20 23.349C13.529 23.349 7.783 26.426 4.136 31.205C4.009 31.371 3.946 31.454 3.919 31.554C3.897 31.639 3.897 31.741 3.919 31.826C3.946 31.926 4.009 32.009 4.136 32.175C7.783 36.952 13.528 40 19.969 40ZM19.969 0C8.947 0 0 8.961 0 20C0 23.533 0.906 26.819 2.511 29.702C2.609 29.877 2.658 29.965 2.729 30.001C2.79 30.032 2.865 30.038 2.93 30.017C3.006 29.992 3.069 29.912 3.196 29.75L19.338 9.185C19.564 8.897 19.677 8.753 19.814 8.701C19.934 8.656 20.066 8.656 20.186 8.701C20.324 8.753 20.437 8.897 20.662 9.185L36.804 29.75C36.931 29.912 36.994 29.992 37.07 30.017C37.136 30.038 37.21 30.032 37.271 30.001C37.343 29.965 37.391 29.877 37.489 29.702C39.094 26.819 40 23.533 40 20C40 8.961 31.053 0 19.969 0Z" fill="#555"/></svg>
+  </div>
+  <div id="legend-mode-toast">Legend Mode Unlocked</div>
 </div>
 
 <canvas id="game"></canvas>
 
+<!-- ============ DEATH SCREEN ============ -->
 <div id="death-screen">
   <div class="death-inner">
     <div class="label-tag">Game Over</div>
@@ -189,15 +196,7 @@
     </div>
     <div class="legend-footer">
       <div class="legend-wordmark">
-        <svg viewBox="0 0 160 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M45.71 6.79H42.41V21.21H56.49V18.46H45.71V6.79Z" fill="white"/>
-          <path d="M62.93 12.61V9.54H75.03V6.79H59.63V21.21H75.03V18.46H62.93V15.35H74.65V12.61H62.93Z" fill="white"/>
-          <path d="M87.63 6.63C84.26 6.63 81.79 7.27 80.16 8.5C78.51 9.75 77.75 11.58 77.75 13.9V14.1C77.75 16.41 78.52 18.24 80.14 19.49C81.74 20.73 84.15 21.37 87.37 21.37H88.05C90.85 21.37 93.63 20.97 96.36 20.38V12.61H87.14V15.35H93.34V18.08C91.75 18.4 90.02 18.62 88.21 18.62H87.51C85.29 18.62 83.72 18.2 82.71 17.43C81.7 16.67 81.22 15.56 81.22 14.1V13.9C81.22 12.44 81.69 11.32 82.69 10.57C83.71 9.8 85.31 9.38 87.63 9.38H88.33C90.99 9.38 93.82 9.9 96.36 10.65V7.76C93.81 7.07 90.98 6.63 88.33 6.63H87.63Z" fill="white"/>
-          <path d="M103.34 12.61V9.54H115.44V6.79H100.04V21.21H115.44V18.46H103.34V15.35H115.07V12.61H103.34Z" fill="white"/>
-          <path fill-rule="evenodd" clip-rule="evenodd" d="M156.33 8.73C154.96 7.48 152.86 6.79 149.94 6.79H140.31V21.21H149.94C152.9 21.21 154.99 20.5 156.35 19.24C157.71 17.97 158.3 16.18 158.3 14.08V13.88C158.3 11.77 157.7 9.99 156.33 8.73ZM143.61 9.54V18.46H149.88C151.72 18.46 152.94 18.02 153.71 17.28C154.47 16.53 154.81 15.45 154.81 14.08V13.88C154.81 12.53 154.47 11.46 153.71 10.72C152.94 9.98 151.72 9.54 149.88 9.54H143.61Z" fill="white"/>
-          <path d="M122.24 6.79H118.64V21.21H121.87V10.72L132.93 21.21H136.53V6.79H133.29V17.28L122.24 6.79Z" fill="white"/>
-          <path d="M14.37 28C19.04 28 23.17 25.87 25.79 22.54C25.89 22.42 25.94 22.36 25.96 22.28C25.97 22.22 25.97 22.15 25.96 22.08C25.94 22.01 25.89 21.95 25.79 21.83C23.17 18.49 19.04 16.34 14.39 16.34C9.74 16.34 5.61 18.49 2.99 21.83C2.89 21.95 2.85 22.01 2.83 22.08C2.81 22.15 2.81 22.22 2.83 22.28C2.85 22.36 2.89 22.42 2.99 22.54C5.61 25.87 9.74 28 14.37 28ZM14.37 0C6.44 0 0 6.27 0 14C0 16.47 0.65 18.78 1.81 20.79C1.88 20.92 1.91 20.98 1.96 21C2.01 21.02 2.06 21.03 2.11 21.01C2.16 21 2.21 20.94 2.3 20.83L13.92 6.42C14.08 6.22 14.16 6.12 14.26 6.09C14.34 6.06 14.44 6.06 14.52 6.09C14.62 6.12 14.7 6.22 14.86 6.42L26.49 20.83C26.58 20.94 26.62 21 26.68 21.01C26.72 21.03 26.78 21.02 26.82 21C26.87 20.98 26.9 20.92 26.97 20.79C28.13 18.78 28.78 16.47 28.78 14C28.78 6.27 22.34 0 14.37 0Z" fill="white"/>
-        </svg>
+        <svg viewBox="0 0 160 28" fill="none"><path d="M45.71 6.79H42.41V21.21H56.49V18.46H45.71V6.79Z" fill="white"/><path d="M62.93 12.61V9.54H75.03V6.79H59.63V21.21H75.03V18.46H62.93V15.35H74.65V12.61H62.93Z" fill="white"/><path d="M87.63 6.63C84.26 6.63 81.79 7.27 80.16 8.5C78.51 9.75 77.75 11.58 77.75 13.9V14.1C77.75 16.41 78.52 18.24 80.14 19.49C81.74 20.73 84.15 21.37 87.37 21.37H88.05C90.85 21.37 93.63 20.97 96.36 20.38V12.61H87.14V15.35H93.34V18.08C91.75 18.4 90.02 18.62 88.21 18.62H87.51C85.29 18.62 83.72 18.2 82.71 17.43C81.7 16.67 81.22 15.56 81.22 14.1V13.9C81.22 12.44 81.69 11.32 82.69 10.57C83.71 9.8 85.31 9.38 87.63 9.38H88.33C90.99 9.38 93.82 9.9 96.36 10.65V7.76C93.81 7.07 90.98 6.63 88.33 6.63H87.63Z" fill="white"/><path d="M103.34 12.61V9.54H115.44V6.79H100.04V21.21H115.44V18.46H103.34V15.35H115.07V12.61H103.34Z" fill="white"/><path fill-rule="evenodd" clip-rule="evenodd" d="M156.33 8.73C154.96 7.48 152.86 6.79 149.94 6.79H140.31V21.21H149.94C152.9 21.21 154.99 20.5 156.35 19.24C157.71 17.97 158.3 16.18 158.3 14.08V13.88C158.3 11.77 157.7 9.99 156.33 8.73ZM143.61 9.54V18.46H149.88C151.72 18.46 152.94 18.02 153.71 17.28C154.47 16.53 154.81 15.45 154.81 14.08V13.88C154.81 12.53 154.47 11.46 153.71 10.72C152.94 9.98 151.72 9.54 149.88 9.54H143.61Z" fill="white"/><path d="M122.24 6.79H118.64V21.21H121.87V10.72L132.93 21.21H136.53V6.79H133.29V17.28L122.24 6.79Z" fill="white"/><path d="M14.37 28C19.04 28 23.17 25.87 25.79 22.54C25.89 22.42 25.94 22.36 25.96 22.28C25.97 22.22 25.97 22.15 25.96 22.08C25.94 22.01 25.89 21.95 25.79 21.83C23.17 18.49 19.04 16.34 14.39 16.34C9.74 16.34 5.61 18.49 2.99 21.83C2.89 21.95 2.85 22.01 2.83 22.08C2.81 22.15 2.81 22.22 2.83 22.28C2.85 22.36 2.89 22.42 2.99 22.54C5.61 25.87 9.74 28 14.37 28ZM14.37 0C6.44 0 0 6.27 0 14C0 16.47 0.65 18.78 1.81 20.79C1.88 20.92 1.91 20.98 1.96 21C2.01 21.02 2.06 21.03 2.11 21.01C2.16 21 2.21 20.94 2.3 20.83L13.92 6.42C14.08 6.22 14.16 6.12 14.26 6.09C14.34 6.06 14.44 6.06 14.52 6.09C14.62 6.12 14.7 6.22 14.86 6.42L26.49 20.83C26.58 20.94 26.62 21 26.68 21.01C26.72 21.03 26.78 21.02 26.82 21C26.87 20.98 26.9 20.92 26.97 20.79C28.13 18.78 28.78 16.47 28.78 14C28.78 6.27 22.34 0 14.37 0Z" fill="white"/></svg>
       </div>
       <div class="cta-text">Skip the fees. Get started today.</div>
       <a class="app-store-link" href="https://apps.apple.com/us/app/legend-xyz/id6504718187" target="_blank" rel="noopener noreferrer">
@@ -217,667 +216,444 @@
 </div>
 <div id="share-toast">Link copied!</div>
 
+<!-- ============ START SCREEN CANVAS ============ -->
 <script>
-// --- START SCREEN FX ---
 (function() {
-  const sc = document.getElementById('start-canvas');
-  const sctx = sc.getContext('2d');
+  const sc = document.getElementById('start-canvas'), sctx = sc.getContext('2d');
   let sw, sh;
   function sResize() { sw = sc.width = window.innerWidth; sh = sc.height = window.innerHeight; }
-  sResize();
-  window.addEventListener('resize', sResize);
+  sResize(); window.addEventListener('resize', sResize);
 
   const mouse = { x: -999, y: -999, active: false };
+  const sm = { x: 0, y: 0 };
   const startEl = document.getElementById('start-screen');
-  const smoothMouse = { x: 0, y: 0 };
 
-  startEl.addEventListener('mousemove', (e) => { mouse.x = e.clientX; mouse.y = e.clientY; mouse.active = true; });
-  startEl.addEventListener('touchmove', (e) => { mouse.x = e.touches[0].clientX; mouse.y = e.touches[0].clientY; mouse.active = true; }, { passive: true });
-  startEl.addEventListener('touchstart', (e) => { mouse.x = e.touches[0].clientX; mouse.y = e.touches[0].clientY; mouse.active = true; }, { passive: true });
+  startEl.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; mouse.active = true; });
+  startEl.addEventListener('touchmove', e => { mouse.x = e.touches[0].clientX; mouse.y = e.touches[0].clientY; mouse.active = true; }, { passive: true });
+  startEl.addEventListener('touchstart', e => { mouse.x = e.touches[0].clientX; mouse.y = e.touches[0].clientY; mouse.active = true; }, { passive: true });
 
-  const PREVIEW_FEES = [
-    '$4.86 ATM Fee', '$26.77 Overdraft', '$13.95 Monthly Fee', '$35 Wire Fee',
-    '$2.50 Paper Fee', '$5 Inactivity Fee', '3% Foreign Txn', '$12 Acct Analysis',
-    '$15 Returned Item', '$25 Stop Payment', 'Fine Print Fee', '$10 Low Balance',
-    '$7.50 Check Fee', '$30 Cashier Check', '$3 Statement Fee', '$8 ACH Return'
-  ];
-
+  const FEES = ['$4.86 ATM Fee','$26.77 Overdraft','$13.95 Monthly Fee','$35 Wire Fee','$2.50 Paper Fee','$5 Inactivity Fee','3% Foreign Txn','$12 Acct Analysis','$15 Returned Item','$25 Stop Payment','Fine Print Fee','$10 Low Balance','$7.50 Check Fee','$30 Cashier Check'];
   const ghosts = [];
   for (let i = 0; i < 16; i++) {
-    const label = PREVIEW_FEES[i % PREVIEW_FEES.length];
-    ghosts.push({
-      x: Math.random() * 2000 - 200, y: 40 + Math.random() * (sh - 80),
-      w: 85 + label.length * 4.5, h: 24,
-      vx: (Math.random() > 0.5 ? 1 : -1) * (0.12 + Math.random() * 0.3),
-      vy: (Math.random() - 0.5) * 0.08, label,
-    });
+    const l = FEES[i % FEES.length];
+    ghosts.push({ x: Math.random()*2000-200, y: 40+Math.random()*(800), w: 80+l.length*4.5, h: 22, vx: (Math.random()>.5?1:-1)*(0.1+Math.random()*0.25), vy: (Math.random()-.5)*0.06, label: l });
   }
 
-  let gridOff = 0, ambientAngle = 0;
+  const feeCircle = {
+    rings: [
+      { r: 130, pct: '10.56%', dotAngle: 0, dotSpeed: 0.004 },
+      { r: 90, pct: '6.25%', dotAngle: 2.1, dotSpeed: -0.006 },
+      { r: 55, pct: '4.05%', dotAngle: 4.2, dotSpeed: 0.008 },
+    ],
+    cx: 0, cy: 0
+  };
 
-  function sDraw() {
+  let gridOff = 0, amb = 0, t = 0;
+
+  function draw() {
     if (startEl.classList.contains('hidden')) return;
-    gridOff = (gridOff + 0.12) % 40;
+    t++; gridOff = (gridOff + 0.1) % 40;
+    if (!mouse.active) { amb += 0.002; mouse.x = sw/2 + Math.cos(amb)*sw*0.15; mouse.y = sh/2 + Math.sin(amb*0.6)*sh*0.1; }
+    sm.x += (mouse.x - sm.x) * 0.07; sm.y += (mouse.y - sm.y) * 0.07;
+    const mx = sm.x, my = sm.y;
 
-    if (!mouse.active) {
-      ambientAngle += 0.002;
-      mouse.x = sw / 2 + Math.cos(ambientAngle) * sw * 0.18;
-      mouse.y = sh / 2 + Math.sin(ambientAngle * 0.6) * sh * 0.12;
-    }
+    sctx.fillStyle = '#000'; sctx.fillRect(0, 0, sw, sh);
+    const lr = 280;
 
-    smoothMouse.x += (mouse.x - smoothMouse.x) * 0.08;
-    smoothMouse.y += (mouse.y - smoothMouse.y) * 0.08;
-    const mx = smoothMouse.x, my = smoothMouse.y;
-
-    sctx.fillStyle = '#000';
-    sctx.fillRect(0, 0, sw, sh);
-
-    const lightR = 260;
-
-    // grid
+    // grid revealed by light
     sctx.lineWidth = 0.5;
     for (let x = 0; x < sw; x += 40) {
-      const dist = Math.abs(x - mx);
-      if (dist > lightR) continue;
-      const a = Math.pow(1 - dist / lightR, 2) * 0.07;
-      sctx.strokeStyle = `rgba(120,255,180,${a})`;
-      sctx.beginPath(); sctx.moveTo(x, 0); sctx.lineTo(x, sh); sctx.stroke();
+      const d = Math.abs(x - mx); if (d > lr) continue;
+      sctx.strokeStyle = `rgba(120,255,180,${Math.pow(1-d/lr,2)*0.06})`;
+      sctx.beginPath(); sctx.moveTo(x,0); sctx.lineTo(x,sh); sctx.stroke();
     }
-    for (let y = (gridOff % 40); y < sh; y += 40) {
-      const dist = Math.abs(y - my);
-      if (dist > lightR) continue;
-      const a = Math.pow(1 - dist / lightR, 2) * 0.07;
-      sctx.strokeStyle = `rgba(120,255,180,${a})`;
-      sctx.beginPath(); sctx.moveTo(0, y); sctx.lineTo(sw, y); sctx.stroke();
+    for (let y = gridOff%40; y < sh; y += 40) {
+      const d = Math.abs(y - my); if (d > lr) continue;
+      sctx.strokeStyle = `rgba(120,255,180,${Math.pow(1-d/lr,2)*0.06})`;
+      sctx.beginPath(); sctx.moveTo(0,y); sctx.lineTo(sw,y); sctx.stroke();
     }
 
-    // ghosts
+    // ghost fees
     for (const g of ghosts) {
       g.x += g.vx; g.y += g.vy;
-      if (g.x > sw + 80) g.x = -g.w - 10;
-      if (g.x < -g.w - 80) g.x = sw + 10;
-      if (g.y < 20 || g.y > sh - 20) g.vy *= -1;
-      const cx = g.x + g.w / 2, cy = g.y + g.h / 2;
-      const dist = Math.sqrt((cx - mx) ** 2 + (cy - my) ** 2);
-      if (dist > lightR + 30) continue;
-      const reveal = Math.pow(Math.max(0, 1 - dist / lightR), 1.5);
-      sctx.globalAlpha = reveal * 0.5;
-      sctx.fillStyle = 'rgba(255,50,50,0.06)';
-      sctx.strokeStyle = `rgba(255,60,60,${reveal * 0.4})`;
-      sctx.lineWidth = 0.8;
-      sctx.beginPath();
-      const r = 3;
-      sctx.moveTo(g.x+r,g.y); sctx.lineTo(g.x+g.w-r,g.y); sctx.arcTo(g.x+g.w,g.y,g.x+g.w,g.y+r,r);
-      sctx.lineTo(g.x+g.w,g.y+g.h-r); sctx.arcTo(g.x+g.w,g.y+g.h,g.x+g.w-r,g.y+g.h,r);
-      sctx.lineTo(g.x+r,g.y+g.h); sctx.arcTo(g.x,g.y+g.h,g.x,g.y+g.h-r,r);
-      sctx.lineTo(g.x,g.y+r); sctx.arcTo(g.x,g.y,g.x+r,g.y,r);
+      if (g.x > sw+80) g.x = -g.w-10; if (g.x < -g.w-80) g.x = sw+10;
+      if (g.y < 20 || g.y > sh-20) g.vy *= -1;
+      const cx = g.x+g.w/2, cy = g.y+g.h/2;
+      const d = Math.sqrt((cx-mx)**2+(cy-my)**2); if (d > lr+30) continue;
+      const rv = Math.pow(Math.max(0,1-d/lr),1.5);
+      sctx.globalAlpha = rv * 0.45;
+      sctx.fillStyle = 'rgba(255,50,50,0.05)'; sctx.strokeStyle = `rgba(255,55,55,${rv*0.35})`; sctx.lineWidth = 0.7;
+      sctx.beginPath(); const rr=3;
+      sctx.moveTo(g.x+rr,g.y); sctx.lineTo(g.x+g.w-rr,g.y); sctx.arcTo(g.x+g.w,g.y,g.x+g.w,g.y+rr,rr);
+      sctx.lineTo(g.x+g.w,g.y+g.h-rr); sctx.arcTo(g.x+g.w,g.y+g.h,g.x+g.w-rr,g.y+g.h,rr);
+      sctx.lineTo(g.x+rr,g.y+g.h); sctx.arcTo(g.x,g.y+g.h,g.x,g.y+g.h-rr,rr);
+      sctx.lineTo(g.x,g.y+rr); sctx.arcTo(g.x,g.y,g.x+rr,g.y,rr);
       sctx.closePath(); sctx.fill(); sctx.stroke();
-      sctx.fillStyle = `rgba(255,60,60,${reveal * 0.55})`;
-      sctx.font = `bold ${sw < 500 ? 8 : 9}px DiatypeMono, monospace`;
-      sctx.textAlign = 'center'; sctx.textBaseline = 'middle';
-      sctx.fillText(g.label, cx, cy);
+      sctx.fillStyle = `rgba(255,55,55,${rv*0.5})`; sctx.font = `bold ${sw<500?7:9}px Mono, monospace`;
+      sctx.textAlign = 'center'; sctx.textBaseline = 'middle'; sctx.fillText(g.label, cx, cy);
       sctx.globalAlpha = 1;
     }
 
-    // light cone
-    const grd = sctx.createRadialGradient(mx, my, 0, mx, my, lightR);
-    grd.addColorStop(0, 'rgba(120,255,180,0.035)');
-    grd.addColorStop(0.5, 'rgba(120,255,180,0.01)');
-    grd.addColorStop(1, 'rgba(120,255,180,0)');
-    sctx.fillStyle = grd;
-    sctx.fillRect(0, 0, sw, sh);
+    // fee circle illustration (below center)
+    feeCircle.cx = sw / 2; feeCircle.cy = sh * 0.72;
+    const fcx = feeCircle.cx, fcy = feeCircle.cy;
+
+    for (const ring of feeCircle.rings) {
+      ring.dotAngle += ring.dotSpeed;
+      sctx.beginPath(); sctx.arc(fcx, fcy, ring.r, 0, Math.PI * 2);
+      sctx.strokeStyle = 'rgba(255,255,255,0.07)'; sctx.lineWidth = 0.6; sctx.stroke();
+
+      // animated dot on ring
+      const dx = fcx + Math.cos(ring.dotAngle) * ring.r;
+      const dy = fcy + Math.sin(ring.dotAngle) * ring.r;
+      sctx.beginPath(); sctx.arc(dx, dy, 3.5, 0, Math.PI * 2);
+      sctx.fillStyle = 'rgba(255,255,255,0.35)'; sctx.fill();
+
+      // percentage label near dot
+      const lx = fcx + Math.cos(ring.dotAngle) * (ring.r + 18);
+      const ly = fcy + Math.sin(ring.dotAngle) * (ring.r + 18);
+      sctx.fillStyle = 'rgba(255,255,255,0.2)'; sctx.font = '8px Mono, monospace';
+      sctx.textAlign = 'center'; sctx.textBaseline = 'middle';
+      sctx.fillText(ring.pct, lx, ly);
+    }
+
+    // USDC coin at center of fee circle
+    sctx.beginPath(); sctx.arc(fcx, fcy, 22, 0, Math.PI * 2);
+    sctx.fillStyle = 'rgba(38,112,196,0.12)'; sctx.fill();
+    sctx.strokeStyle = 'rgba(38,112,196,0.25)'; sctx.lineWidth = 1.2; sctx.stroke();
+    sctx.fillStyle = 'rgba(38,112,196,0.6)'; sctx.font = 'bold 16px Mono, monospace';
+    sctx.textAlign = 'center'; sctx.textBaseline = 'middle';
+    sctx.fillText('$', fcx, fcy + 1);
+
+    // soft light cone
+    const grd = sctx.createRadialGradient(mx, my, 0, mx, my, lr);
+    grd.addColorStop(0, 'rgba(120,255,180,0.03)'); grd.addColorStop(0.5, 'rgba(120,255,180,0.008)'); grd.addColorStop(1, 'rgba(120,255,180,0)');
+    sctx.fillStyle = grd; sctx.fillRect(0, 0, sw, sh);
 
     // cursor dot
     if (mouse.active) {
-      sctx.beginPath(); sctx.arc(mx, my, 5, 0, Math.PI * 2);
-      sctx.fillStyle = 'rgba(120,255,180,0.12)'; sctx.fill();
-      sctx.beginPath(); sctx.arc(mx, my, 2.5, 0, Math.PI * 2);
-      sctx.fillStyle = 'rgba(120,255,180,0.3)'; sctx.fill();
+      sctx.beginPath(); sctx.arc(mx, my, 4, 0, Math.PI*2);
+      sctx.fillStyle = 'rgba(120,255,180,0.1)'; sctx.fill();
+      sctx.beginPath(); sctx.arc(mx, my, 2, 0, Math.PI*2);
+      sctx.fillStyle = 'rgba(120,255,180,0.25)'; sctx.fill();
     }
 
-    requestAnimationFrame(sDraw);
+    requestAnimationFrame(draw);
   }
-  requestAnimationFrame(sDraw);
+  requestAnimationFrame(draw);
+})();
+
+// corner icon easter egg
+(function() {
+  const left = document.getElementById('icon-left');
+  const right = document.getElementById('icon-right');
+  const toast = document.getElementById('legend-mode-toast');
+  let leftActive = false, rightActive = false;
+  window._legendMode = false;
+
+  function check() {
+    if (leftActive && rightActive && !window._legendMode) {
+      window._legendMode = true;
+      toast.classList.add('visible');
+      document.body.style.setProperty('--legend-mode', '1');
+      setTimeout(() => toast.classList.remove('visible'), 3000);
+    }
+  }
+
+  left.addEventListener('click', e => {
+    e.stopPropagation(); leftActive = !leftActive;
+    left.classList.toggle('active', leftActive);
+    left.querySelector('path').setAttribute('fill', leftActive ? '#78FFB4' : '#555');
+    check();
+  });
+  right.addEventListener('click', e => {
+    e.stopPropagation(); rightActive = !rightActive;
+    right.classList.toggle('active', rightActive);
+    right.querySelector('path').setAttribute('fill', rightActive ? '#78FFB4' : '#555');
+    check();
+  });
 })();
 </script>
 
+<!-- ============ GAME ENGINE ============ -->
 <script>
-const canvas = document.getElementById('game');
-const ctx = canvas.getContext('2d');
-
-// --- AUDIO ---
-let audioCtx, masterGain, bassOsc, bassGain, droneOsc, droneGain;
-let audioStarted = false;
+const canvas = document.getElementById('game'), ctx = canvas.getContext('2d');
+let audioCtx, masterGain, bassOsc, bassGain, droneOsc, droneGain, audioStarted = false;
 
 function initAudio() {
-  if (audioStarted) return;
-  audioStarted = true;
-  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  masterGain = audioCtx.createGain();
-  masterGain.gain.value = 0.25;
-  masterGain.connect(audioCtx.destination);
-
-  droneOsc = audioCtx.createOscillator();
-  droneGain = audioCtx.createGain();
-  droneOsc.type = 'sine'; droneOsc.frequency.value = 55; droneGain.gain.value = 0.05;
+  if (audioStarted) return; audioStarted = true;
+  audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+  masterGain = audioCtx.createGain(); masterGain.gain.value = 0.25; masterGain.connect(audioCtx.destination);
+  droneOsc = audioCtx.createOscillator(); droneGain = audioCtx.createGain();
+  droneOsc.type='sine'; droneOsc.frequency.value=55; droneGain.gain.value=0.05;
   droneOsc.connect(droneGain); droneGain.connect(masterGain); droneOsc.start();
-
-  bassOsc = audioCtx.createOscillator();
-  bassGain = audioCtx.createGain();
-  bassOsc.type = 'triangle'; bassOsc.frequency.value = 82.4; bassGain.gain.value = 0;
+  bassOsc = audioCtx.createOscillator(); bassGain = audioCtx.createGain();
+  bassOsc.type='triangle'; bassOsc.frequency.value=82.4; bassGain.gain.value=0;
   bassOsc.connect(bassGain); bassGain.connect(masterGain); bassOsc.start();
 }
+function playHit(v){if(!audioCtx)return;const o=audioCtx.createOscillator(),g=audioCtx.createGain(),f=audioCtx.createBiquadFilter();o.type='sawtooth';o.frequency.value=100+Math.min(v,35)*10;f.type='lowpass';f.frequency.value=600+v*20;f.Q.value=6;g.gain.value=0.12;o.connect(f);f.connect(g);g.connect(masterGain);o.start();g.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+0.2);o.stop(audioCtx.currentTime+0.25);}
+function playNM(){if(!audioCtx)return;const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type='sine';o.frequency.value=1400;g.gain.value=0.03;o.connect(g);g.connect(masterGain);o.start();o.frequency.exponentialRampToValueAtTime(700,audioCtx.currentTime+0.07);g.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+0.09);o.stop(audioCtx.currentTime+0.1);}
+function playDeath(){if(!audioCtx)return;const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type='sawtooth';o.frequency.value=180;g.gain.value=0.18;o.connect(g);g.connect(masterGain);o.start();o.frequency.exponentialRampToValueAtTime(25,audioCtx.currentTime+1);g.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+1.2);o.stop(audioCtx.currentTime+1.3);if(droneGain)droneGain.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+0.6);}
+function playDodge(){if(!audioCtx)return;const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type='sine';o.frequency.value=600+dodgeStreak*80;g.gain.value=0.015;o.connect(g);g.connect(masterGain);o.start();o.frequency.exponentialRampToValueAtTime(o.frequency.value*1.2,audioCtx.currentTime+0.05);g.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+0.08);o.stop(audioCtx.currentTime+0.1);}
+function updateDrone(s){if(!droneOsc)return;droneOsc.frequency.value=55+s*6;droneGain.gain.value=Math.min(0.1,0.03+s*0.006);}
+function pulseBass(){if(!bassGain)return;bassGain.gain.cancelScheduledValues(audioCtx.currentTime);bassGain.gain.setValueAtTime(0.06,audioCtx.currentTime);bassGain.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+0.25);}
 
-function playHit(value) {
-  if (!audioCtx) return;
-  const o = audioCtx.createOscillator(), g = audioCtx.createGain(), f = audioCtx.createBiquadFilter();
-  o.type = 'sawtooth'; o.frequency.value = 100 + Math.min(value, 35) * 10;
-  f.type = 'lowpass'; f.frequency.value = 600 + value * 20; f.Q.value = 6;
-  g.gain.value = 0.12;
-  o.connect(f); f.connect(g); g.connect(masterGain); o.start();
-  g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.2);
-  o.stop(audioCtx.currentTime + 0.25);
-}
+let W,H; function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight;} resize(); window.addEventListener('resize',resize);
 
-function playNearMiss() {
-  if (!audioCtx) return;
-  const o = audioCtx.createOscillator(), g = audioCtx.createGain();
-  o.type = 'sine'; o.frequency.value = 1400; g.gain.value = 0.03;
-  o.connect(g); g.connect(masterGain); o.start();
-  o.frequency.exponentialRampToValueAtTime(700, audioCtx.currentTime + 0.07);
-  g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.09);
-  o.stop(audioCtx.currentTime + 0.1);
-}
-
-function playDeath() {
-  if (!audioCtx) return;
-  const o = audioCtx.createOscillator(), g = audioCtx.createGain();
-  o.type = 'sawtooth'; o.frequency.value = 180; g.gain.value = 0.18;
-  o.connect(g); g.connect(masterGain); o.start();
-  o.frequency.exponentialRampToValueAtTime(25, audioCtx.currentTime + 1);
-  g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1.2);
-  o.stop(audioCtx.currentTime + 1.3);
-  if (droneGain) droneGain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.6);
-}
-
-function playDodge() {
-  if (!audioCtx) return;
-  const o = audioCtx.createOscillator(), g = audioCtx.createGain();
-  o.type = 'sine'; o.frequency.value = 600 + dodgeStreak * 80; g.gain.value = 0.015;
-  o.connect(g); g.connect(masterGain); o.start();
-  o.frequency.exponentialRampToValueAtTime(o.frequency.value * 1.2, audioCtx.currentTime + 0.05);
-  g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.08);
-  o.stop(audioCtx.currentTime + 0.1);
-}
-
-function updateDrone(speed) {
-  if (!droneOsc) return;
-  droneOsc.frequency.value = 55 + speed * 6;
-  droneGain.gain.value = Math.min(0.1, 0.03 + speed * 0.006);
-}
-
-function pulseBass() {
-  if (!bassGain) return;
-  bassGain.gain.cancelScheduledValues(audioCtx.currentTime);
-  bassGain.gain.setValueAtTime(0.06, audioCtx.currentTime);
-  bassGain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.25);
-}
-
-// --- GAME STATE ---
-let W, H;
-function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
-resize();
-window.addEventListener('resize', resize);
-
-const FEES = [
-  { label: '$4.86 ATM Fee', value: 4.86, speed: 1, color: '#ff4444' },
-  { label: '$26.77 Overdraft', value: 26.77, speed: 0.65, color: '#ff6633' },
-  { label: '$13.95 Monthly Fee', value: 13.95, speed: 0.85, color: '#ff5544' },
-  { label: '$35 Wire Fee', value: 35, speed: 0.55, color: '#ff3322' },
-  { label: '$2.50 Paper Fee', value: 2.50, speed: 1.15, color: '#cc4444' },
-  { label: '$5 Inactivity Fee', value: 5, speed: 1.05, color: '#dd5555' },
-  { label: '3% Foreign Txn', value: 15, speed: 0.9, color: '#ee4433' },
-  { label: '$12 Acct Analysis', value: 12, speed: 0.75, color: '#dd3333' },
-  { label: '$15 Returned Item', value: 15, speed: 0.7, color: '#ff2222' },
-  { label: '$25 Stop Payment', value: 25, speed: 0.6, color: '#ee3344' },
-  { label: 'Fine Print Fee', value: 8, speed: 1.2, color: '#883333', stealth: true },
-  { label: '$10 Low Balance', value: 10, speed: 0.9, color: '#cc3322' },
+const FEES=[
+  {label:'$4.86 ATM Fee',value:4.86,speed:1,color:'#ff4444'},
+  {label:'$26.77 Overdraft',value:26.77,speed:0.65,color:'#ff6633'},
+  {label:'$13.95 Monthly Fee',value:13.95,speed:0.85,color:'#ff5544'},
+  {label:'$35 Wire Fee',value:35,speed:0.55,color:'#ff3322'},
+  {label:'$2.50 Paper Fee',value:2.50,speed:1.15,color:'#cc4444'},
+  {label:'$5 Inactivity Fee',value:5,speed:1.05,color:'#dd5555'},
+  {label:'3% Foreign Txn',value:15,speed:0.9,color:'#ee4433'},
+  {label:'$12 Acct Analysis',value:12,speed:0.75,color:'#dd3333'},
+  {label:'$15 Returned Item',value:15,speed:0.7,color:'#ff2222'},
+  {label:'$25 Stop Payment',value:25,speed:0.6,color:'#ee3344'},
+  {label:'Fine Print Fee',value:8,speed:1.2,color:'#883333',stealth:true},
+  {label:'$10 Low Balance',value:10,speed:0.9,color:'#cc3322'},
 ];
 
-let player, obstacles, balance, distance, gameSpeed, frameCount, totalFeesHit, feesHitMap;
-let gameState = 'start', shakeAmount = 0, flashAmount = 0;
-let particles = [], trailPoints = [];
-let nearMissTimer = 0, nearMissCount = 0, gridOffset = 0, dodgedCount = 0, dodgeStreak = 0;
-let hitShrink = 0, bestYears = parseFloat(localStorage.getItem('fd_best') || '0');
-const playerTarget = { x: 0, y: 0 };
+let player,obstacles,balance,distance,gameSpeed,frameCount,totalFeesHit,feesHitMap;
+let gameState='start',shakeAmount=0,flashAmount=0;
+let particles=[],trailPoints=[];
+let nearMissTimer=0,nearMissCount=0,gridOffset=0,dodgedCount=0,dodgeStreak=0;
+let hitShrink=0,bestYears=parseFloat(localStorage.getItem('fd_best')||'0');
+const pt={x:0,y:0};
 
-function initGame() {
-  player = { x: W / 2, y: H * 0.75, radius: 13 };
-  playerTarget.x = player.x; playerTarget.y = player.y;
-  obstacles = []; particles = []; trailPoints = [];
-  balance = 100; distance = 0; gameSpeed = 1.5; frameCount = 0;
-  totalFeesHit = 0; feesHitMap = {}; shakeAmount = 0; flashAmount = 0;
-  nearMissTimer = 0; nearMissCount = 0; dodgedCount = 0; dodgeStreak = 0; hitShrink = 0;
-  gameState = 'playing';
-  initAudio();
+function initGame(){
+  player={x:W/2,y:H*0.75,radius:13};pt.x=player.x;pt.y=player.y;
+  obstacles=[];particles=[];trailPoints=[];
+  balance=100;distance=0;gameSpeed=1.5;frameCount=0;
+  totalFeesHit=0;feesHitMap={};shakeAmount=0;flashAmount=0;
+  nearMissTimer=0;nearMissCount=0;dodgedCount=0;dodgeStreak=0;hitShrink=0;
+  gameState='playing';initAudio();
 }
 
-function spawnObstacle() {
-  const fee = FEES[Math.floor(Math.random() * FEES.length)];
-  const side = Math.random() > 0.5;
-  const baseW = fee.label.length * 7 + 20;
-  const scaledW = baseW * (W < 500 ? 0.8 : 1);
-  const h = fee.value > 20 ? 30 : fee.value > 10 ? 27 : 24;
-  obstacles.push({
-    x: side ? -scaledW - 10 : W + 10,
-    y: 80 + Math.random() * (H * 0.65),
-    w: scaledW, h,
-    vx: (side ? 1 : -1) * fee.speed * (0.85 + Math.random() * 0.3) * gameSpeed,
-    vy: (Math.random() - 0.5) * 0.35 * gameSpeed,
-    label: fee.label, value: fee.value, color: fee.color,
-    stealth: fee.stealth || false,
-    opacity: fee.stealth ? 0 : 1,
-    hit: false, nearMissed: false,
-    rotation: (Math.random() - 0.5) * 0.015, angle: 0,
-  });
+function spawnOb(){
+  const fee=FEES[Math.floor(Math.random()*FEES.length)];
+  const side=Math.random()>0.5;
+  const bw=fee.label.length*7+20,sw2=bw*(W<500?0.8:1),h=fee.value>20?30:fee.value>10?27:24;
+  obstacles.push({x:side?-sw2-10:W+10,y:80+Math.random()*(H*0.65),w:sw2,h,
+    vx:(side?1:-1)*fee.speed*(0.85+Math.random()*0.3)*gameSpeed,
+    vy:(Math.random()-0.5)*0.35*gameSpeed,
+    label:fee.label,value:fee.value,color:fee.color,
+    stealth:fee.stealth||false,opacity:fee.stealth?0:1,
+    hit:false,nearMissed:false,rotation:(Math.random()-0.5)*0.015,angle:0});
 }
 
-function spawnParticles(x, y, color, count, spread) {
-  for (let i = 0; i < count; i++) {
-    const a = Math.random() * Math.PI * 2, v = 1 + Math.random() * (spread || 5);
-    particles.push({ x, y, vx: Math.cos(a)*v, vy: Math.sin(a)*v, life: 1, color, size: 1.5 + Math.random() * 2.5 });
-  }
-}
-function spawnSparks(x, y) {
-  for (let i = 0; i < 8; i++) {
-    const a = Math.random() * Math.PI * 2, v = 2 + Math.random() * 6;
-    particles.push({ x, y, vx: Math.cos(a)*v, vy: Math.sin(a)*v, life: 1, color: '#78FFB4', size: 1 + Math.random(), spark: true });
-  }
-}
+function spawnP(x,y,c,n,s){for(let i=0;i<n;i++){const a=Math.random()*Math.PI*2,v=1+Math.random()*(s||5);particles.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v,life:1,color:c,size:1.5+Math.random()*2.5});}}
+function spawnSparks(x,y){for(let i=0;i<8;i++){const a=Math.random()*Math.PI*2,v=2+Math.random()*6;particles.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v,life:1,color:'#78FFB4',size:1+Math.random(),spark:true});}}
 
-function handleInput(cx, cy) { playerTarget.x = cx; playerTarget.y = cy; }
+canvas.addEventListener('mousemove',e=>{if(gameState==='playing'){pt.x=e.clientX;pt.y=e.clientY;}});
+canvas.addEventListener('touchmove',e=>{e.preventDefault();if(gameState==='playing'){pt.x=e.touches[0].clientX;pt.y=e.touches[0].clientY;}},{passive:false});
+canvas.addEventListener('touchstart',e=>{e.preventDefault();if(gameState==='playing'){pt.x=e.touches[0].clientX;pt.y=e.touches[0].clientY;}},{passive:false});
 
-canvas.addEventListener('mousemove', (e) => { if (gameState === 'playing') handleInput(e.clientX, e.clientY); });
-canvas.addEventListener('touchmove', (e) => { e.preventDefault(); if (gameState === 'playing') handleInput(e.touches[0].clientX, e.touches[0].clientY); }, { passive: false });
-canvas.addEventListener('touchstart', (e) => { e.preventDefault(); if (gameState === 'playing') handleInput(e.touches[0].clientX, e.touches[0].clientY); }, { passive: false });
-
-document.getElementById('start-screen').addEventListener('click', () => {
+document.getElementById('start-screen').addEventListener('click',()=>{
   document.getElementById('start-screen').classList.add('hidden');
-  setTimeout(() => { document.getElementById('start-screen').style.display = 'none'; }, 500);
+  setTimeout(()=>{document.getElementById('start-screen').style.display='none';},500);
   initGame();
 });
-document.getElementById('retry-btn').addEventListener('click', () => {
-  document.getElementById('death-screen').classList.remove('visible');
-  initGame();
-});
+document.getElementById('retry-btn').addEventListener('click',()=>{document.getElementById('death-screen').classList.remove('visible');initGame();});
 
-function getYears() { return (distance / 800).toFixed(1); }
-
-function getBalanceColor(b) {
-  if (b > 60) return '#78FFB4';
-  if (b > 35) { const t = (b - 35) / 25; return lerpColor('#FFD666', '#78FFB4', t); }
-  if (b > 15) { const t = (b - 15) / 20; return lerpColor('#ff5544', '#FFD666', t); }
-  return '#ff4444';
+function getYears(){return(distance/800).toFixed(1);}
+function balColor(b){
+  if(b>60)return'#78FFB4';
+  if(b>35){const t=(b-35)/25;return lc('#FFD666','#78FFB4',t);}
+  if(b>15){const t=(b-15)/20;return lc('#ff5544','#FFD666',t);}
+  return'#ff4444';
 }
-function lerpColor(a, b, t) {
-  const pa = [parseInt(a.slice(1,3),16), parseInt(a.slice(3,5),16), parseInt(a.slice(5,7),16)];
-  const pb = [parseInt(b.slice(1,3),16), parseInt(b.slice(3,5),16), parseInt(b.slice(5,7),16)];
-  const r = Math.round(pa[0] + (pb[0]-pa[0])*t), g = Math.round(pa[1] + (pb[1]-pa[1])*t), bl = Math.round(pa[2] + (pb[2]-pa[2])*t);
-  return `rgb(${r},${g},${bl})`;
-}
+function lc(a,b,t){const pa=[parseInt(a.slice(1,3),16),parseInt(a.slice(3,5),16),parseInt(a.slice(5,7),16)];const pb=[parseInt(b.slice(1,3),16),parseInt(b.slice(3,5),16),parseInt(b.slice(5,7),16)];return`rgb(${Math.round(pa[0]+(pb[0]-pa[0])*t)},${Math.round(pa[1]+(pb[1]-pa[1])*t)},${Math.round(pa[2]+(pb[2]-pa[2])*t)})`;}
 
-function update() {
-  if (gameState !== 'playing') return;
-  frameCount++;
-  distance += gameSpeed;
-  gameSpeed = 1.5 + distance * 0.0003;
-  gridOffset = (gridOffset + gameSpeed * 0.25) % 40;
-  hitShrink *= 0.88;
+function update(){
+  if(gameState!=='playing')return;
+  frameCount++;distance+=gameSpeed;gameSpeed=1.5+distance*0.0003;
+  gridOffset=(gridOffset+gameSpeed*0.25)%40;hitShrink*=0.88;
+  updateDrone(gameSpeed);if(frameCount%28===0)pulseBass();
+  const sr=Math.max(16,45-distance*0.007);if(frameCount%Math.floor(sr)===0)spawnOb();
 
-  updateDrone(gameSpeed);
-  if (frameCount % 28 === 0) pulseBass();
+  player.x+=(pt.x-player.x)*0.14;player.y+=(pt.y-player.y)*0.14;
+  player.x=Math.max(player.radius,Math.min(W-player.radius,player.x));
+  player.y=Math.max(player.radius,Math.min(H-player.radius,player.y));
 
-  const spawnRate = Math.max(16, 45 - distance * 0.007);
-  if (frameCount % Math.floor(spawnRate) === 0) spawnObstacle();
+  trailPoints.unshift({x:player.x,y:player.y,life:1});
+  if(trailPoints.length>24)trailPoints.pop();
+  trailPoints.forEach(p=>p.life-=0.045);
+  nearMissTimer=Math.max(0,nearMissTimer-1);
 
-  player.x += (playerTarget.x - player.x) * 0.14;
-  player.y += (playerTarget.y - player.y) * 0.14;
-  player.x = Math.max(player.radius, Math.min(W - player.radius, player.x));
-  player.y = Math.max(player.radius, Math.min(H - player.radius, player.y));
-
-  trailPoints.unshift({ x: player.x, y: player.y, life: 1 });
-  if (trailPoints.length > 24) trailPoints.pop();
-  trailPoints.forEach(p => p.life -= 0.045);
-
-  nearMissTimer = Math.max(0, nearMissTimer - 1);
-
-  for (let i = obstacles.length - 1; i >= 0; i--) {
-    const ob = obstacles[i];
-    ob.x += ob.vx; ob.y += ob.vy;
-    ob.angle += ob.rotation;
-
-    if (ob.stealth) {
-      const dx = player.x - (ob.x + ob.w/2), dy = player.y - (ob.y + ob.h/2);
-      ob.opacity = Math.max(0, Math.min(1, 1 - (Math.sqrt(dx*dx+dy*dy) - 50) / 90));
-    }
-
-    if (ob.x < -ob.w - 50 || ob.x > W + 50 || ob.y < -50 || ob.y > H + 50) {
-      if (!ob.hit) { dodgedCount++; dodgeStreak++; playDodge(); }
-      obstacles.splice(i, 1); continue;
-    }
-
-    if (!ob.hit) {
-      const cx = Math.max(ob.x, Math.min(player.x, ob.x + ob.w));
-      const cy = Math.max(ob.y, Math.min(player.y, ob.y + ob.h));
-      const dx = player.x - cx, dy = player.y - cy;
-      const distSq = dx*dx + dy*dy;
-      const pr = player.radius * (1 - hitShrink * 0.3);
-
-      if (!ob.nearMissed && distSq < (pr + 16) * (pr + 16) && distSq > pr * pr) {
-        ob.nearMissed = true;
-        nearMissTimer = 18;
-        nearMissCount++;
-        spawnSparks(cx, cy);
-        playNearMiss();
-      }
-
-      if (distSq < pr * pr) {
-        ob.hit = true;
-        balance -= ob.value;
-        totalFeesHit += ob.value;
-        feesHitMap[ob.label] = (feesHitMap[ob.label] || 0) + ob.value;
-        shakeAmount = 12; flashAmount = 1; hitShrink = 1; dodgeStreak = 0;
-        spawnParticles(player.x, player.y, ob.color, 20, 7);
-        playHit(ob.value);
-        if (balance <= 0) { balance = 0; gameState = 'dead'; playDeath(); showDeath(); }
-      }
+  for(let i=obstacles.length-1;i>=0;i--){
+    const ob=obstacles[i];ob.x+=ob.vx;ob.y+=ob.vy;ob.angle+=ob.rotation;
+    if(ob.stealth){const dx=player.x-(ob.x+ob.w/2),dy=player.y-(ob.y+ob.h/2);ob.opacity=Math.max(0,Math.min(1,1-(Math.sqrt(dx*dx+dy*dy)-50)/90));}
+    if(ob.x<-ob.w-50||ob.x>W+50||ob.y<-50||ob.y>H+50){if(!ob.hit){dodgedCount++;dodgeStreak++;playDodge();}obstacles.splice(i,1);continue;}
+    if(!ob.hit){
+      const cx=Math.max(ob.x,Math.min(player.x,ob.x+ob.w)),cy=Math.max(ob.y,Math.min(player.y,ob.y+ob.h));
+      const dx=player.x-cx,dy=player.y-cy,dq=dx*dx+dy*dy,pr=player.radius*(1-hitShrink*0.3);
+      if(!ob.nearMissed&&dq<(pr+16)*(pr+16)&&dq>pr*pr){ob.nearMissed=true;nearMissTimer=18;nearMissCount++;spawnSparks(cx,cy);playNM();}
+      if(dq<pr*pr){ob.hit=true;balance-=ob.value;totalFeesHit+=ob.value;feesHitMap[ob.label]=(feesHitMap[ob.label]||0)+ob.value;
+        shakeAmount=12;flashAmount=1;hitShrink=1;dodgeStreak=0;spawnP(player.x,player.y,ob.color,20,7);playHit(ob.value);
+        if(balance<=0){balance=0;gameState='dead';playDeath();showDeath();}}
     }
   }
-
-  particles = particles.filter(p => {
-    p.x += p.vx; p.y += p.vy;
-    p.life -= p.spark ? 0.045 : 0.022;
-    p.vx *= 0.94; p.vy *= p.spark ? 0.9 : 0.95;
-    if (p.spark) p.vy += 0.12;
-    return p.life > 0;
-  });
-
-  shakeAmount *= 0.8;
-  flashAmount *= 0.82;
+  particles=particles.filter(p=>{p.x+=p.vx;p.y+=p.vy;p.life-=p.spark?0.045:0.022;p.vx*=0.94;p.vy*=p.spark?0.9:0.95;if(p.spark)p.vy+=0.12;return p.life>0;});
+  shakeAmount*=0.8;flashAmount*=0.82;
 }
 
-function rr(cx, x, y, w, h, r) {
-  if (cx.roundRect) { cx.roundRect(x, y, w, h, r); return; }
-  cx.moveTo(x+r,y); cx.lineTo(x+w-r,y); cx.arcTo(x+w,y,x+w,y+r,r);
-  cx.lineTo(x+w,y+h-r); cx.arcTo(x+w,y+h,x+w-r,y+h,r);
-  cx.lineTo(x+r,y+h); cx.arcTo(x,y+h,x,y+h-r,r);
-  cx.lineTo(x,y+r); cx.arcTo(x,y,x+r,y,r); cx.closePath();
-}
+function rr(c,x,y,w,h,r){if(c.roundRect){c.roundRect(x,y,w,h,r);return;}c.moveTo(x+r,y);c.lineTo(x+w-r,y);c.arcTo(x+w,y,x+w,y+r,r);c.lineTo(x+w,y+h-r);c.arcTo(x+w,y+h,x+w-r,y+h,r);c.lineTo(x+r,y+h);c.arcTo(x,y+h,x,y+h-r,r);c.lineTo(x,y+r);c.arcTo(x,y,x+r,y,r);c.closePath();}
 
-function draw() {
-  if (!player) { ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, H); return; }
+// USDC blue for player in legend mode
+const USDC_BLUE = '#2775CA';
+
+function draw(){
+  if(!player){ctx.fillStyle='#000';ctx.fillRect(0,0,W,H);return;}
   ctx.save();
-  if (shakeAmount > 0.5) ctx.translate((Math.random()-.5)*shakeAmount*2, (Math.random()-.5)*shakeAmount*2);
-
-  ctx.fillStyle = '#000';
-  ctx.fillRect(0, 0, W, H);
+  if(shakeAmount>0.5)ctx.translate((Math.random()-.5)*shakeAmount*2,(Math.random()-.5)*shakeAmount*2);
+  ctx.fillStyle='#000';ctx.fillRect(0,0,W,H);
 
   // grid
-  const ga = 0.02 + gameSpeed * 0.0025;
-  ctx.strokeStyle = `rgba(120,255,180,${ga})`; ctx.lineWidth = 0.5;
-  for (let x = 0; x < W; x += 40) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
-  for (let y = -40 + (gridOffset % 40); y < H + 40; y += 40) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
+  const lm = window._legendMode;
+  const gc = lm ? '38,112,196' : '120,255,180';
+  const ga=0.02+gameSpeed*0.0025;
+  ctx.strokeStyle=`rgba(${gc},${ga})`;ctx.lineWidth=0.5;
+  for(let x=0;x<W;x+=40){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+  for(let y=-40+(gridOffset%40);y<H+40;y+=40){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
 
   // horizon
-  const hg = ctx.createLinearGradient(0, H*0.88, 0, H);
-  hg.addColorStop(0, 'rgba(120,255,180,0)');
-  hg.addColorStop(1, `rgba(120,255,180,${0.015 + gameSpeed * 0.002})`);
-  ctx.fillStyle = hg; ctx.fillRect(0, H*0.88, W, H*0.12);
+  const hg=ctx.createLinearGradient(0,H*0.88,0,H);
+  hg.addColorStop(0,`rgba(${gc},0)`);hg.addColorStop(1,`rgba(${gc},${0.015+gameSpeed*0.002})`);
+  ctx.fillStyle=hg;ctx.fillRect(0,H*0.88,W,H*0.12);
 
   // vignette
-  const vig = ctx.createRadialGradient(W/2, H/2, Math.min(W,H)*0.3, W/2, H/2, Math.max(W,H)*0.7);
-  vig.addColorStop(0, 'rgba(0,0,0,0)');
-  vig.addColorStop(1, `rgba(0,0,0,${0.15 + gameSpeed * 0.02})`);
-  ctx.fillStyle = vig; ctx.fillRect(0, 0, W, H);
+  const vig=ctx.createRadialGradient(W/2,H/2,Math.min(W,H)*0.3,W/2,H/2,Math.max(W,H)*0.7);
+  vig.addColorStop(0,'rgba(0,0,0,0)');vig.addColorStop(1,`rgba(0,0,0,${0.15+gameSpeed*0.02})`);
+  ctx.fillStyle=vig;ctx.fillRect(0,0,W,H);
 
-  // hit flash
-  if (flashAmount > 0.05) {
-    ctx.fillStyle = `rgba(255,40,40,${flashAmount * 0.07})`;
-    ctx.fillRect(0, 0, W, H);
-  }
+  if(flashAmount>0.05){ctx.fillStyle=`rgba(255,40,40,${flashAmount*0.07})`;ctx.fillRect(0,0,W,H);}
 
   // trail
-  if (trailPoints.length > 1) {
-    ctx.beginPath(); ctx.moveTo(trailPoints[0].x, trailPoints[0].y);
-    for (let i = 1; i < trailPoints.length; i++) {
-      if (trailPoints[i].life <= 0) break;
-      ctx.lineTo(trailPoints[i].x, trailPoints[i].y);
-    }
-    ctx.strokeStyle = 'rgba(120,255,180,0.25)'; ctx.lineWidth = 2.5; ctx.lineCap = 'round'; ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(trailPoints[0].x, trailPoints[0].y);
-    for (let i = 1; i < Math.min(6, trailPoints.length); i++) {
-      if (trailPoints[i].life <= 0) break;
-      ctx.lineTo(trailPoints[i].x, trailPoints[i].y);
-    }
-    ctx.strokeStyle = 'rgba(120,255,180,0.5)'; ctx.lineWidth = 1.2; ctx.stroke();
+  if(trailPoints.length>1){
+    ctx.beginPath();ctx.moveTo(trailPoints[0].x,trailPoints[0].y);
+    for(let i=1;i<trailPoints.length;i++){if(trailPoints[i].life<=0)break;ctx.lineTo(trailPoints[i].x,trailPoints[i].y);}
+    ctx.strokeStyle=lm?'rgba(38,112,196,0.25)':'rgba(120,255,180,0.25)';ctx.lineWidth=2.5;ctx.lineCap='round';ctx.stroke();
+    ctx.beginPath();ctx.moveTo(trailPoints[0].x,trailPoints[0].y);
+    for(let i=1;i<Math.min(6,trailPoints.length);i++){if(trailPoints[i].life<=0)break;ctx.lineTo(trailPoints[i].x,trailPoints[i].y);}
+    ctx.strokeStyle=lm?'rgba(38,112,196,0.5)':'rgba(120,255,180,0.5)';ctx.lineWidth=1.2;ctx.stroke();
   }
 
-  // player
-  const pr = player.radius * (1 - hitShrink * 0.3);
-  const streakGlow = Math.min(dodgeStreak * 0.015, 0.2);
+  // player (USDC coin)
+  const pr=player.radius*(1-hitShrink*0.3);
+  const sg=Math.min(dodgeStreak*0.015,0.2);
+  const pc = lm ? USDC_BLUE : '#78FFB4';
+  const pcr = lm ? '38,112,196' : '120,255,180';
 
-  const og = ctx.createRadialGradient(player.x, player.y, 0, player.x, player.y, 55 + streakGlow * 100);
-  og.addColorStop(0, `rgba(120,255,180,${0.1 + streakGlow})`);
-  og.addColorStop(0.5, `rgba(120,255,180,${0.02 + streakGlow * 0.3})`);
-  og.addColorStop(1, 'rgba(120,255,180,0)');
-  ctx.fillStyle = og; ctx.beginPath(); ctx.arc(player.x, player.y, 55 + streakGlow * 100, 0, Math.PI*2); ctx.fill();
+  const og=ctx.createRadialGradient(player.x,player.y,0,player.x,player.y,55+sg*100);
+  og.addColorStop(0,`rgba(${pcr},${0.1+sg})`);og.addColorStop(0.5,`rgba(${pcr},${0.02+sg*0.3})`);og.addColorStop(1,`rgba(${pcr},0)`);
+  ctx.fillStyle=og;ctx.beginPath();ctx.arc(player.x,player.y,55+sg*100,0,Math.PI*2);ctx.fill();
 
-  ctx.beginPath(); ctx.arc(player.x, player.y, pr, 0, Math.PI*2);
-  const bg = ctx.createRadialGradient(player.x-2, player.y-2, 0, player.x, player.y, pr);
-  bg.addColorStop(0, '#ccffee'); bg.addColorStop(1, '#78FFB4');
-  ctx.fillStyle = bg; ctx.fill();
+  // USDC body
+  ctx.beginPath();ctx.arc(player.x,player.y,pr,0,Math.PI*2);
+  const bg=ctx.createRadialGradient(player.x-2,player.y-2,0,player.x,player.y,pr);
+  bg.addColorStop(0,lm?'#5BA3E0':'#ccffee');bg.addColorStop(1,pc);
+  ctx.fillStyle=bg;ctx.fill();
 
-  ctx.beginPath(); ctx.arc(player.x, player.y, pr + 2.5, 0, Math.PI*2);
-  ctx.strokeStyle = nearMissTimer > 0 ? `rgba(255,255,255,${0.4 + nearMissTimer/18*0.4})` : `rgba(120,255,180,${0.15 + streakGlow})`;
-  ctx.lineWidth = nearMissTimer > 0 ? 1.8 : 0.8; ctx.stroke();
+  // outer ring
+  ctx.beginPath();ctx.arc(player.x,player.y,pr+2.5,0,Math.PI*2);
+  ctx.strokeStyle=nearMissTimer>0?`rgba(255,255,255,${0.4+nearMissTimer/18*0.4})`:`rgba(${pcr},${0.15+sg})`;
+  ctx.lineWidth=nearMissTimer>0?1.8:0.8;ctx.stroke();
 
-  ctx.fillStyle = '#000'; ctx.font = `bold ${Math.round(pr * 0.85)}px DiatypeMono, monospace`;
-  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-  ctx.fillText('$', player.x, player.y + 0.5);
+  // $ symbol
+  ctx.fillStyle=lm?'#fff':'#000';ctx.font=`bold ${Math.round(pr*0.85)}px Mono, monospace`;
+  ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('$',player.x,player.y+0.5);
 
   // obstacles
-  obstacles.forEach(ob => {
-    if (ob.hit) return;
-    const a = ob.stealth ? ob.opacity : 1;
-    if (a < 0.02) return;
-    ctx.save(); ctx.globalAlpha = a;
-    ctx.translate(ob.x + ob.w/2, ob.y + ob.h/2); ctx.rotate(ob.angle);
-    ctx.shadowColor = ob.color; ctx.shadowBlur = 4;
-    ctx.fillStyle = ob.color + '10'; ctx.strokeStyle = ob.color + (ob.nearMissed ? 'aa' : '44'); ctx.lineWidth = 0.8;
-    ctx.beginPath(); rr(ctx, -ob.w/2, -ob.h/2, ob.w, ob.h, 3); ctx.fill(); ctx.stroke();
-    ctx.shadowBlur = 0;
-    ctx.fillStyle = ob.color; ctx.font = `bold ${W < 500 ? 8 : 10}px DiatypeMono, monospace`;
-    ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(ob.label, 0, 0);
-    ctx.restore();
+  obstacles.forEach(ob=>{
+    if(ob.hit)return;const a=ob.stealth?ob.opacity:1;if(a<0.02)return;
+    ctx.save();ctx.globalAlpha=a;ctx.translate(ob.x+ob.w/2,ob.y+ob.h/2);ctx.rotate(ob.angle);
+    ctx.shadowColor=ob.color;ctx.shadowBlur=4;
+    ctx.fillStyle=ob.color+'10';ctx.strokeStyle=ob.color+(ob.nearMissed?'aa':'44');ctx.lineWidth=0.8;
+    ctx.beginPath();rr(ctx,-ob.w/2,-ob.h/2,ob.w,ob.h,3);ctx.fill();ctx.stroke();ctx.shadowBlur=0;
+    ctx.fillStyle=ob.color;ctx.font=`bold ${W<500?8:10}px Mono, monospace`;
+    ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(ob.label,0,0);ctx.restore();
   });
 
   // particles
-  particles.forEach(p => {
-    ctx.globalAlpha = p.life;
-    if (p.spark) { ctx.fillStyle = '#fff'; ctx.fillRect(p.x, p.y, p.size * p.life, 0.8); }
-    else { ctx.fillStyle = p.color; ctx.beginPath(); ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI*2); ctx.fill(); }
-    ctx.globalAlpha = 1;
-  });
+  particles.forEach(p=>{ctx.globalAlpha=p.life;if(p.spark){ctx.fillStyle='#fff';ctx.fillRect(p.x,p.y,p.size*p.life,0.8);}else{ctx.fillStyle=p.color;ctx.beginPath();ctx.arc(p.x,p.y,p.size*p.life,0,Math.PI*2);ctx.fill();}ctx.globalAlpha=1;});
 
   // near miss
-  if (nearMissTimer > 0) {
-    const na = nearMissTimer / 18;
-    ctx.fillStyle = `rgba(120,255,180,${na * 0.4})`;
-    ctx.font = 'bold 10px DiatypeMono, monospace'; ctx.textAlign = 'center';
-    ctx.fillText('CLOSE', player.x, player.y - 24);
-  }
+  if(nearMissTimer>0){ctx.fillStyle=`rgba(${pcr},${nearMissTimer/18*0.4})`;ctx.font='bold 10px Mono, monospace';ctx.textAlign='center';ctx.fillText('CLOSE',player.x,player.y-24);}
 
   // HUD
-  if (gameState === 'playing' || gameState === 'dead') {
-    const bc = getBalanceColor(balance);
+  if(gameState==='playing'||gameState==='dead'){
+    const bc=balColor(balance);
+    ctx.fillStyle='#383838';ctx.font='8px Mono, monospace';ctx.textAlign='left';ctx.fillText('BALANCE',16,24);
+    ctx.fillStyle=bc;ctx.font='bold 22px Mono, monospace';ctx.fillText('$'+balance.toFixed(2),16,46);
+    ctx.fillStyle='#111';ctx.fillRect(16,54,100,2);ctx.fillStyle=bc;ctx.fillRect(16,54,100*(balance/100),2);
 
-    ctx.fillStyle = '#383838'; ctx.font = '8px DiatypeMono, monospace'; ctx.textAlign = 'left';
-    ctx.fillText('BALANCE', 16, 24);
-    ctx.fillStyle = bc; ctx.font = 'bold 22px DiatypeMono, monospace';
-    ctx.fillText('$' + balance.toFixed(2), 16, 46);
-    ctx.fillStyle = '#111'; ctx.fillRect(16, 54, 100, 2);
-    ctx.fillStyle = bc; ctx.fillRect(16, 54, 100 * (balance / 100), 2);
+    ctx.fillStyle='#383838';ctx.font='8px Mono, monospace';ctx.textAlign='right';ctx.fillText('YEARS',W-16,24);
+    ctx.fillStyle='#fff';ctx.font='bold 22px Mono, monospace';ctx.fillText(getYears(),W-16,46);
+    if(bestYears>0){ctx.fillStyle='#282828';ctx.font='8px Mono, monospace';ctx.fillText('BEST '+bestYears.toFixed(1),W-16,60);}
 
-    ctx.fillStyle = '#383838'; ctx.font = '8px DiatypeMono, monospace'; ctx.textAlign = 'right';
-    ctx.fillText('YEARS', W - 16, 24);
-    ctx.fillStyle = '#fff'; ctx.font = 'bold 22px DiatypeMono, monospace';
-    ctx.fillText(getYears(), W - 16, 46);
+    ctx.fillStyle='#282828';ctx.font='8px Mono, monospace';ctx.textAlign='center';ctx.fillText('FEES',W/2,24);
+    ctx.fillStyle='#ff4444';ctx.font='bold 16px Mono, monospace';ctx.fillText('-$'+totalFeesHit.toFixed(2),W/2,44);
 
-    if (bestYears > 0) {
-      ctx.fillStyle = '#282828'; ctx.font = '8px DiatypeMono, monospace';
-      ctx.fillText('BEST ' + bestYears.toFixed(1), W - 16, 60);
-    }
-
-    ctx.fillStyle = '#282828'; ctx.font = '8px DiatypeMono, monospace'; ctx.textAlign = 'center';
-    ctx.fillText('FEES', W/2, 24);
-    ctx.fillStyle = '#ff4444'; ctx.font = 'bold 16px DiatypeMono, monospace';
-    ctx.fillText('-$' + totalFeesHit.toFixed(2), W/2, 44);
-
-    if (dodgedCount > 0) {
-      ctx.fillStyle = '#1e2e24'; ctx.font = '8px DiatypeMono, monospace';
-      ctx.fillText('DODGED', W/2, 58);
-      ctx.fillStyle = '#4a8a6a'; ctx.font = 'bold 11px DiatypeMono, monospace';
-      ctx.fillText(String(dodgedCount), W/2, 72);
-    }
-
-    if (dodgeStreak >= 5) {
-      ctx.fillStyle = `rgba(120,255,180,${0.3 + Math.sin(frameCount * 0.1) * 0.15})`;
-      ctx.font = 'bold 10px DiatypeMono, monospace'; ctx.textAlign = 'center';
-      ctx.fillText('STREAK ' + dodgeStreak, W/2, H - 20);
-    }
+    if(dodgedCount>0){ctx.fillStyle='#1e2e24';ctx.font='8px Mono, monospace';ctx.fillText('DODGED',W/2,58);ctx.fillStyle='#4a8a6a';ctx.font='bold 11px Mono, monospace';ctx.fillText(String(dodgedCount),W/2,72);}
+    if(dodgeStreak>=5){ctx.fillStyle=`rgba(${pcr},${0.3+Math.sin(frameCount*0.1)*0.15})`;ctx.font='bold 10px Mono, monospace';ctx.textAlign='center';ctx.fillText('STREAK '+dodgeStreak,W/2,H-20);}
   }
-
   ctx.restore();
 }
 
-// --- CHALLENGE ---
-const urlParams = new URLSearchParams(window.location.search);
-const challengeScore = urlParams.get('challenge');
-const challengeBy = urlParams.get('by') || '???';
+// ---- CHALLENGE ----
+const urlP=new URLSearchParams(window.location.search);
+const cScore=urlP.get('challenge'),cBy=urlP.get('by')||'???';
+if(cScore){const i=document.getElementById('challenge-intro');i.style.display='block';i.innerHTML=`<div class="challenger">${cBy} survived</div><div class="challenge-score">${cScore} years</div><div class="challenge-dare">Can you beat it?</div>`;document.getElementById('start-prompt').textContent='TAP TO ACCEPT';}
 
-if (challengeScore) {
-  const intro = document.getElementById('challenge-intro');
-  intro.style.display = 'block';
-  intro.innerHTML = `<div class="challenger">${challengeBy} survived</div><div class="challenge-score">${challengeScore} years</div><div class="challenge-dare">Can you beat it?</div>`;
-  document.getElementById('start-prompt').textContent = 'TAP TO ACCEPT';
+let handle=localStorage.getItem('fd_handle')||'';
+function ensureH(){if(handle)return handle;const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';handle='';for(let i=0;i<3;i++)handle+=c[Math.floor(Math.random()*c.length)];localStorage.setItem('fd_handle',handle);return handle;}
+function challengeUrl(){return`${window.location.origin}${window.location.pathname}?challenge=${getYears()}&by=${ensureH()}`;}
+
+function renderShareCard(){
+  const c=document.getElementById('share-card'),cx=c.getContext('2d');
+  const w=600,h=315;c.width=w;c.height=h;
+  const bg=cx.createLinearGradient(0,0,0,h);bg.addColorStop(0,'#050505');bg.addColorStop(1,'#0a0a0a');
+  cx.fillStyle=bg;cx.fillRect(0,0,w,h);
+  cx.strokeStyle='rgba(120,255,180,0.02)';cx.lineWidth=0.5;
+  for(let x=0;x<w;x+=25){cx.beginPath();cx.moveTo(x,0);cx.lineTo(x,h);cx.stroke();}
+  for(let y=0;y<h;y+=25){cx.beginPath();cx.moveTo(0,y);cx.lineTo(w,y);cx.stroke();}
+  const gl=cx.createRadialGradient(w/2,h*0.4,0,w/2,h*0.4,220);gl.addColorStop(0,'rgba(120,255,180,0.04)');gl.addColorStop(1,'rgba(0,0,0,0)');cx.fillStyle=gl;cx.fillRect(0,0,w,h);
+  cx.fillStyle='#383838';cx.font='9px Mono, monospace';cx.textAlign='center';cx.fillText('F E E   D O D G E',w/2,32);
+  cx.fillStyle='#fff';cx.font='300 58px Knapp, sans-serif';cx.fillText(getYears(),w/2,100);
+  cx.fillStyle='#444';cx.font='10px Mono, monospace';cx.fillText('YEARS SURVIVED',w/2,122);
+  cx.fillStyle='#ff4444';cx.font='bold 24px Mono, monospace';cx.fillText('-$'+totalFeesHit.toFixed(2),w*0.3,170);
+  cx.fillStyle='#78FFB4';cx.fillText(dodgedCount+' dodged',w*0.7,170);
+  cx.fillStyle='#2a2a2a';cx.font='8px Mono, monospace';cx.fillText('FEES TAKEN',w*0.3,185);cx.fillText('FEES DODGED',w*0.7,185);
+  const sorted=Object.entries(feesHitMap).sort((a,b)=>b[1]-a[1]);
+  if(sorted.length){cx.fillStyle='#2a2a2a';cx.font='9px Mono, monospace';cx.fillText('Killed by: '+sorted[0][0],w/2,215);}
+  cx.fillStyle='#78FFB4';cx.font='500 13px Mono, monospace';cx.fillText(ensureH()+' challenges you to beat '+getYears()+' years',w/2,255);
+  cx.fillStyle='#222';cx.font='8px Mono, monospace';cx.fillText('LEGEND  \u00B7  FEE DODGE',w/2,290);
+  cx.fillStyle='#ff4444';cx.fillRect(0,0,w,1.5);cx.fillStyle='#78FFB4';cx.fillRect(0,h-1.5,w,1.5);
 }
 
-let playerHandle = localStorage.getItem('fd_handle') || '';
-function ensureHandle() {
-  if (playerHandle) return playerHandle;
-  const c = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  playerHandle = ''; for (let i = 0; i < 3; i++) playerHandle += c[Math.floor(Math.random() * c.length)];
-  localStorage.setItem('fd_handle', playerHandle); return playerHandle;
-}
-function getChallengeUrl() {
-  return `${window.location.origin}${window.location.pathname}?challenge=${getYears()}&by=${ensureHandle()}`;
-}
+function showShareCard(){renderShareCard();document.getElementById('share-card-wrap').classList.add('visible');}
+document.getElementById('challenge-btn').addEventListener('click',showShareCard);
+document.getElementById('share-copy-btn').addEventListener('click',()=>{navigator.clipboard.writeText(challengeUrl()).then(()=>{const t=document.getElementById('share-toast');t.textContent='Challenge link copied!';t.classList.add('visible');setTimeout(()=>t.classList.remove('visible'),2200);}).catch(()=>prompt('Copy this:',challengeUrl()));});
+document.getElementById('share-save-btn').addEventListener('click',()=>{const a=document.createElement('a');a.download='fee-dodge-'+getYears()+'yrs.png';a.href=document.getElementById('share-card').toDataURL('image/png');a.click();});
+document.getElementById('share-close-btn').addEventListener('click',()=>{document.getElementById('share-card-wrap').classList.remove('visible');});
 
-function renderShareCard() {
-  const c = document.getElementById('share-card'), cx = c.getContext('2d');
-  const w = 600, h = 315; c.width = w; c.height = h;
-
-  // bg gradient
-  const bg = cx.createLinearGradient(0, 0, 0, h);
-  bg.addColorStop(0, '#050505'); bg.addColorStop(1, '#0a0a0a');
-  cx.fillStyle = bg; cx.fillRect(0, 0, w, h);
-
-  // grid
-  cx.strokeStyle = 'rgba(120,255,180,0.025)'; cx.lineWidth = 0.5;
-  for (let x = 0; x < w; x += 25) { cx.beginPath(); cx.moveTo(x,0); cx.lineTo(x,h); cx.stroke(); }
-  for (let y = 0; y < h; y += 25) { cx.beginPath(); cx.moveTo(0,y); cx.lineTo(w,y); cx.stroke(); }
-
-  // center glow
-  const gl = cx.createRadialGradient(w/2, h*0.4, 0, w/2, h*0.4, 220);
-  gl.addColorStop(0, 'rgba(120,255,180,0.04)'); gl.addColorStop(1, 'rgba(0,0,0,0)');
-  cx.fillStyle = gl; cx.fillRect(0, 0, w, h);
-
-  // title
-  cx.fillStyle = '#383838'; cx.font = '9px DiatypeMono, monospace'; cx.textAlign = 'center';
-  cx.fillText('F E E   D O D G E', w/2, 32);
-
-  // score
-  cx.fillStyle = '#fff'; cx.font = '300 58px Knapp, sans-serif'; cx.fillText(getYears(), w/2, 100);
-  cx.fillStyle = '#444'; cx.font = '10px DiatypeMono, monospace'; cx.fillText('YEARS SURVIVED', w/2, 122);
-
-  // stats row
-  cx.fillStyle = '#ff4444'; cx.font = 'bold 24px DiatypeMono, monospace';
-  cx.fillText('-$' + totalFeesHit.toFixed(2), w*0.3, 170);
-  cx.fillStyle = '#78FFB4'; cx.fillText(dodgedCount + ' dodged', w*0.7, 170);
-  cx.fillStyle = '#2a2a2a'; cx.font = '8px DiatypeMono, monospace';
-  cx.fillText('FEES TAKEN', w*0.3, 185); cx.fillText('FEES DODGED', w*0.7, 185);
-
-  // killer
-  const sorted = Object.entries(feesHitMap).sort((a,b) => b[1] - a[1]);
-  if (sorted.length) { cx.fillStyle = '#2a2a2a'; cx.font = '9px DiatypeMono, monospace'; cx.fillText('Killed by: ' + sorted[0][0], w/2, 215); }
-
-  // dare
-  cx.fillStyle = '#78FFB4'; cx.font = '500 13px DiatypeMono, monospace';
-  cx.fillText(ensureHandle() + ' challenges you to beat ' + getYears() + ' years', w/2, 255);
-
-  // branding
-  cx.fillStyle = '#222'; cx.font = '8px DiatypeMono, monospace';
-  cx.fillText('LEGEND  \u00B7  FEE DODGE', w/2, 290);
-
-  // accent lines
-  cx.fillStyle = '#ff4444'; cx.fillRect(0, 0, w, 1.5);
-  cx.fillStyle = '#78FFB4'; cx.fillRect(0, h-1.5, w, 1.5);
+function showDeath(){
+  const y=parseFloat(getYears());if(y>bestYears){bestYears=y;localStorage.setItem('fd_best',String(bestYears));}
+  document.getElementById('ds-years').textContent=getYears();
+  document.getElementById('ds-total').textContent='$'+totalFeesHit.toFixed(2);
+  const feesEl=document.getElementById('ds-fees');
+  const sorted=Object.entries(feesHitMap).sort((a,b)=>b[1]-a[1]);
+  feesEl.innerHTML=sorted.slice(0,5).map(([l,v])=>`<span>-$${v.toFixed(2)}</span> ${l}`).join('<br>');
+  const ed=document.getElementById('ds-editorial');
+  if(cScore&&y>parseFloat(cScore)){ed.innerHTML=`<span style="color:#78FFB4">You beat ${cBy}'s ${cScore} years!</span><br>The average American pays $138,000+ in banking fees over a lifetime. On Legend: $0.`;}
+  else if(cScore){ed.innerHTML=`${cBy} still leads with ${cScore} years.<br>The average American pays $138,000+ in banking fees over a lifetime. On Legend: $0.`;}
+  document.querySelectorAll('.death-inner > *').forEach((el,i)=>{el.style.animation='none';el.offsetHeight;el.style.animation=`fsi 0.5s ease-out ${i*0.08}s forwards`;});
+  setTimeout(()=>document.getElementById('death-screen').classList.add('visible'),500);
 }
 
-function showShareCard() { renderShareCard(); document.getElementById('share-card-wrap').classList.add('visible'); }
-
-document.getElementById('challenge-btn').addEventListener('click', showShareCard);
-document.getElementById('share-copy-btn').addEventListener('click', () => {
-  navigator.clipboard.writeText(getChallengeUrl()).then(() => {
-    const t = document.getElementById('share-toast'); t.textContent = 'Challenge link copied!';
-    t.classList.add('visible'); setTimeout(() => t.classList.remove('visible'), 2200);
-  }).catch(() => prompt('Copy this:', getChallengeUrl()));
-});
-document.getElementById('share-save-btn').addEventListener('click', () => {
-  const a = document.createElement('a'); a.download = 'fee-dodge-' + getYears() + 'yrs.png';
-  a.href = document.getElementById('share-card').toDataURL('image/png'); a.click();
-});
-document.getElementById('share-close-btn').addEventListener('click', () => {
-  document.getElementById('share-card-wrap').classList.remove('visible');
-});
-
-function showDeath() {
-  const years = parseFloat(getYears());
-  if (years > bestYears) { bestYears = years; localStorage.setItem('fd_best', String(bestYears)); }
-  document.getElementById('ds-years').textContent = getYears();
-  document.getElementById('ds-total').textContent = '$' + totalFeesHit.toFixed(2);
-  const feesEl = document.getElementById('ds-fees');
-  const sorted = Object.entries(feesHitMap).sort((a,b) => b[1] - a[1]);
-  feesEl.innerHTML = sorted.slice(0, 5).map(([l, v]) => `<span>-$${v.toFixed(2)}</span> ${l}`).join('<br>');
-
-  const ed = document.getElementById('ds-editorial');
-  if (challengeScore && years > parseFloat(challengeScore)) {
-    ed.innerHTML = `<span style="color:#78FFB4">You beat ${challengeBy}'s ${challengeScore} years!</span><br>The average American pays $138,000+ in banking fees over a lifetime. On Legend: $0.`;
-  } else if (challengeScore) {
-    ed.innerHTML = `${challengeBy} still leads with ${challengeScore} years.<br>The average American pays $138,000+ in banking fees over a lifetime. On Legend: $0.`;
-  }
-
-  // re-trigger animations
-  document.querySelectorAll('.death-inner > *').forEach((el, i) => {
-    el.style.animation = 'none'; el.offsetHeight;
-    el.style.animation = `fadeSlideIn 0.5s ease-out ${i * 0.08}s forwards`;
-  });
-
-  setTimeout(() => document.getElementById('death-screen').classList.add('visible'), 500);
-}
-
-function loop() { update(); draw(); requestAnimationFrame(loop); }
-loop();
+function loop(){update();draw();requestAnimationFrame(loop);}loop();
 </script>
 </body>
 </html>
