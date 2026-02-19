@@ -146,6 +146,98 @@
   .share-actions .primary-share:hover { background: rgba(120,255,180,0.12); border-color: #78FFB4; color: #78FFB4; }
   #share-toast { position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%); background: rgba(120,255,180,0.1); border: 1px solid rgba(120,255,180,0.2); color: #78FFB4; padding: 10px 28px; border-radius: 6px; font-family: 'Mono'; font-size: 11px; letter-spacing: 2px; z-index: 50; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
   #share-toast.visible { opacity: 1; }
+
+  /* ---- LEADERBOARD ---- */
+  #leaderboard {
+    display: none; position: fixed; inset: 0; z-index: 35;
+    background: rgba(0,0,0,0.97); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    flex-direction: column; align-items: center; justify-content: flex-start;
+    padding: 0; overflow-y: auto; color: #fff;
+  }
+  #leaderboard.visible { display: flex; }
+  .lb-inner {
+    width: 100%; max-width: 520px; padding: 40px 24px 60px;
+    display: flex; flex-direction: column; align-items: center;
+  }
+  .lb-header {
+    display: flex; align-items: center; justify-content: space-between;
+    width: 100%; margin-bottom: 28px;
+  }
+  .lb-header .lb-title { font-family: 'Knapp'; font-size: 28px; font-weight: 300; color: #fff; }
+  .lb-header .lb-close {
+    width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;
+    border: 1px solid #222; border-radius: 4px; cursor: pointer; transition: all 0.2s;
+    background: transparent; color: #555; font-family: 'Mono'; font-size: 16px;
+  }
+  .lb-header .lb-close:hover { border-color: #555; color: #fff; }
+  .lb-week {
+    font-family: 'Mono'; font-size: 9px; letter-spacing: 4px; text-transform: uppercase;
+    color: #444; margin-bottom: 24px; width: 100%; text-align: left;
+    padding-bottom: 12px; border-bottom: 1px solid #141414;
+  }
+  .lb-week span { color: #78FFB4; }
+  .lb-table { width: 100%; }
+  .lb-row {
+    display: grid; grid-template-columns: 32px 1fr auto; gap: 12px;
+    align-items: center; padding: 12px 0;
+    border-bottom: 1px solid #0e0e0e; transition: background 0.15s;
+  }
+  .lb-row:hover { background: rgba(255,255,255,0.015); }
+  .lb-row.you { background: rgba(120,255,180,0.03); }
+  .lb-row.top3 .lb-rank { color: #D4883A; }
+  .lb-rank {
+    font-family: 'Mono'; font-size: 11px; font-weight: 700; color: #333;
+    text-align: center;
+  }
+  .lb-player {
+    display: flex; align-items: center; gap: 8px;
+  }
+  .lb-handle {
+    font-family: 'Mono'; font-size: 13px; font-weight: 500; color: #ccc;
+  }
+  .lb-badge {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 16px; height: 16px; border-radius: 3px;
+  }
+  .lb-badge svg { width: 10px; height: 10px; }
+  .lb-badge.legend-badge { background: rgba(120,255,180,0.12); }
+  .lb-badge.x-badge { background: rgba(255,255,255,0.06); }
+  .lb-you-tag {
+    font-family: 'Mono'; font-size: 8px; letter-spacing: 2px;
+    text-transform: uppercase; color: #78FFB4; margin-left: 4px;
+  }
+  .lb-score {
+    font-family: 'Mono'; font-size: 13px; font-weight: 700; color: #fff;
+    text-align: right;
+  }
+  .lb-score .unit { font-weight: 400; color: #444; font-size: 10px; margin-left: 2px; }
+
+  .lb-prize-banner {
+    width: 100%; margin-top: 28px; padding: 16px 20px;
+    border: 1px solid #1a1a1a; border-radius: 6px;
+    display: flex; align-items: center; justify-content: space-between;
+    background: rgba(255,255,255,0.01);
+  }
+  .lb-prize-banner .prize-label {
+    font-family: 'Mono'; font-size: 9px; letter-spacing: 3px;
+    text-transform: uppercase; color: #444;
+  }
+  .lb-prize-banner .prize-amount {
+    font-family: 'Knapp'; font-size: 22px; font-weight: 300; color: #78FFB4;
+  }
+  .lb-prize-banner .prize-target {
+    font-family: 'Mono'; font-size: 9px; color: #333; letter-spacing: 2px; text-transform: uppercase;
+  }
+
+  /* leaderboard button on start/death */
+  .lb-btn {
+    font-family: 'Mono'; font-size: 9px; letter-spacing: 3px;
+    text-transform: uppercase; color: #444; cursor: pointer;
+    pointer-events: auto; transition: color 0.2s; background: none; border: none;
+    padding: 8px 0; margin-top: 8px;
+  }
+  .lb-btn:hover { color: #888; }
+  .start-center .lb-btn { margin-top: 20px; }
 </style>
 </head>
 <body>
@@ -169,6 +261,7 @@
     </div>
     <div id="challenge-intro" class="challenge-intro" style="display:none;"></div>
     <div class="prompt" id="start-prompt">TAP OR CLICK TO START</div>
+    <button class="lb-btn" id="lb-open-start" onclick="event.stopPropagation();document.getElementById('leaderboard').classList.add('visible');">View Leaderboard</button>
   </div>
 
   <div class="corner-icon left" id="icon-left">
@@ -194,6 +287,7 @@
       <button id="retry-btn">Try Again</button>
       <button id="challenge-btn">Challenge a Friend</button>
     </div>
+    <button class="lb-btn" id="lb-open-death" onclick="document.getElementById('leaderboard').classList.add('visible');">View Leaderboard</button>
     <div class="legend-footer">
       <div class="legend-wordmark">
         <svg viewBox="0 0 160 28" fill="none"><path d="M45.71 6.79H42.41V21.21H56.49V18.46H45.71V6.79Z" fill="white"/><path d="M62.93 12.61V9.54H75.03V6.79H59.63V21.21H75.03V18.46H62.93V15.35H74.65V12.61H62.93Z" fill="white"/><path d="M87.63 6.63C84.26 6.63 81.79 7.27 80.16 8.5C78.51 9.75 77.75 11.58 77.75 13.9V14.1C77.75 16.41 78.52 18.24 80.14 19.49C81.74 20.73 84.15 21.37 87.37 21.37H88.05C90.85 21.37 93.63 20.97 96.36 20.38V12.61H87.14V15.35H93.34V18.08C91.75 18.4 90.02 18.62 88.21 18.62H87.51C85.29 18.62 83.72 18.2 82.71 17.43C81.7 16.67 81.22 15.56 81.22 14.1V13.9C81.22 12.44 81.69 11.32 82.69 10.57C83.71 9.8 85.31 9.38 87.63 9.38H88.33C90.99 9.38 93.82 9.9 96.36 10.65V7.76C93.81 7.07 90.98 6.63 88.33 6.63H87.63Z" fill="white"/><path d="M103.34 12.61V9.54H115.44V6.79H100.04V21.21H115.44V18.46H103.34V15.35H115.07V12.61H103.34Z" fill="white"/><path fill-rule="evenodd" clip-rule="evenodd" d="M156.33 8.73C154.96 7.48 152.86 6.79 149.94 6.79H140.31V21.21H149.94C152.9 21.21 154.99 20.5 156.35 19.24C157.71 17.97 158.3 16.18 158.3 14.08V13.88C158.3 11.77 157.7 9.99 156.33 8.73ZM143.61 9.54V18.46H149.88C151.72 18.46 152.94 18.02 153.71 17.28C154.47 16.53 154.81 15.45 154.81 14.08V13.88C154.81 12.53 154.47 11.46 153.71 10.72C152.94 9.98 151.72 9.54 149.88 9.54H143.61Z" fill="white"/><path d="M122.24 6.79H118.64V21.21H121.87V10.72L132.93 21.21H136.53V6.79H133.29V17.28L122.24 6.79Z" fill="white"/><path d="M14.37 28C19.04 28 23.17 25.87 25.79 22.54C25.89 22.42 25.94 22.36 25.96 22.28C25.97 22.22 25.97 22.15 25.96 22.08C25.94 22.01 25.89 21.95 25.79 21.83C23.17 18.49 19.04 16.34 14.39 16.34C9.74 16.34 5.61 18.49 2.99 21.83C2.89 21.95 2.85 22.01 2.83 22.08C2.81 22.15 2.81 22.22 2.83 22.28C2.85 22.36 2.89 22.42 2.99 22.54C5.61 25.87 9.74 28 14.37 28ZM14.37 0C6.44 0 0 6.27 0 14C0 16.47 0.65 18.78 1.81 20.79C1.88 20.92 1.91 20.98 1.96 21C2.01 21.02 2.06 21.03 2.11 21.01C2.16 21 2.21 20.94 2.3 20.83L13.92 6.42C14.08 6.22 14.16 6.12 14.26 6.09C14.34 6.06 14.44 6.06 14.52 6.09C14.62 6.12 14.7 6.22 14.86 6.42L26.49 20.83C26.58 20.94 26.62 21 26.68 21.01C26.72 21.03 26.78 21.02 26.82 21C26.87 20.98 26.9 20.92 26.97 20.79C28.13 18.78 28.78 16.47 28.78 14C28.78 6.27 22.34 0 14.37 0Z" fill="white"/></svg>
@@ -202,6 +296,27 @@
       <a class="app-store-link" href="https://apps.apple.com/us/app/legend-xyz/id6504718187" target="_blank" rel="noopener noreferrer">
         <img src="https://legend.xyz/footer/cta-app-store@2x.webp" alt="Download on the App Store" />
       </a>
+    </div>
+  </div>
+</div>
+
+<!-- ============ LEADERBOARD ============ -->
+<div id="leaderboard">
+  <div class="lb-inner">
+    <div class="lb-header">
+      <div class="lb-title">Leaderboard</div>
+      <button class="lb-close" id="lb-close-btn">&times;</button>
+    </div>
+    <div class="lb-week">This week <span>&middot; Feb 17 – 23</span></div>
+
+    <div class="lb-table" id="lb-table"></div>
+
+    <div class="lb-prize-banner">
+      <div>
+        <div class="prize-label">Grand Prize</div>
+        <div class="prize-amount">$10,000 USDC</div>
+      </div>
+      <div class="prize-target">First to 50 years</div>
     </div>
   </div>
 </div>
@@ -654,6 +769,52 @@ function showDeath(){
 }
 
 function loop(){update();draw();requestAnimationFrame(loop);}loop();
+
+// ---- LEADERBOARD ----
+(function() {
+  const DUMMY_DATA = [
+    { rank: 1, handle: 'ZKR', years: 31.4, dodged: 847, badge: 'legend' },
+    { rank: 2, handle: 'VTL', years: 28.9, dodged: 762, badge: 'legend' },
+    { rank: 3, handle: 'MXN', years: 27.1, dodged: 701, badge: 'x' },
+    { rank: 4, handle: 'DFI', years: 24.8, dodged: 655, badge: 'legend' },
+    { rank: 5, handle: 'APX', years: 23.2, dodged: 612, badge: 'x' },
+    { rank: 6, handle: 'NRG', years: 21.7, dodged: 580, badge: null },
+    { rank: 7, handle: 'KYC', years: 19.3, dodged: 511, badge: 'legend' },
+    { rank: 8, handle: 'BLK', years: 18.1, dodged: 478, badge: null },
+    { rank: 9, handle: 'FEN', years: 16.5, dodged: 433, badge: 'x' },
+    { rank: 10, handle: 'RWA', years: 15.2, dodged: 398, badge: null },
+  ];
+
+  const legendBadgeSVG = '<svg viewBox="0 0 40 40" fill="none"><path d="M19.969 40C26.47 40 32.217 36.952 35.864 32.175C35.99 32.009 36.054 31.926 36.081 31.826C36.103 31.741 36.103 31.639 36.081 31.554C36.054 31.454 35.991 31.371 35.864 31.205C32.217 26.426 26.471 23.349 20 23.349C13.529 23.349 7.783 26.426 4.136 31.205C4.009 31.371 3.946 31.454 3.919 31.554C3.897 31.639 3.897 31.741 3.919 31.826C3.946 31.926 4.009 32.009 4.136 32.175C7.783 36.952 13.528 40 19.969 40ZM19.969 0C8.947 0 0 8.961 0 20C0 23.533 0.906 26.819 2.511 29.702C2.609 29.877 2.658 29.965 2.729 30.001C2.79 30.032 2.865 30.038 2.93 30.017C3.006 29.992 3.069 29.912 3.196 29.75L19.338 9.185C19.564 8.897 19.677 8.753 19.814 8.701C19.934 8.656 20.066 8.656 20.186 8.701C20.324 8.753 20.437 8.897 20.662 9.185L36.804 29.75C36.931 29.912 36.994 29.992 37.07 30.017C37.136 30.038 37.21 30.032 37.271 30.001C37.343 29.965 37.391 29.877 37.489 29.702C39.094 26.819 40 23.533 40 20C40 8.961 31.053 0 19.969 0Z" fill="#78FFB4"/></svg>';
+  const xBadgeSVG = '<svg viewBox="0 0 24 24" fill="none"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" fill="#888"/></svg>';
+
+  const table = document.getElementById('lb-table');
+  const myHandle = localStorage.getItem('fd_handle') || '';
+
+  function render() {
+    table.innerHTML = DUMMY_DATA.map(d => {
+      const isYou = d.handle === myHandle;
+      const top3 = d.rank <= 3;
+      let badgeHtml = '';
+      if (d.badge === 'legend') badgeHtml = `<span class="lb-badge legend-badge">${legendBadgeSVG}</span>`;
+      else if (d.badge === 'x') badgeHtml = `<span class="lb-badge x-badge">${xBadgeSVG}</span>`;
+      return `<div class="lb-row${isYou ? ' you' : ''}${top3 ? ' top3' : ''}">
+        <div class="lb-rank">${d.rank}</div>
+        <div class="lb-player">
+          <span class="lb-handle">${d.handle}</span>
+          ${badgeHtml}
+          ${isYou ? '<span class="lb-you-tag">You</span>' : ''}
+        </div>
+        <div class="lb-score">${d.years.toFixed(1)}<span class="unit">yr</span></div>
+      </div>`;
+    }).join('');
+  }
+
+  render();
+  document.getElementById('lb-close-btn').addEventListener('click', () => {
+    document.getElementById('leaderboard').classList.remove('visible');
+  });
+})();
 </script>
 </body>
 </html>
