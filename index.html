@@ -10,10 +10,17 @@
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
 <style>
+  @font-face { font-family: 'Knapp'; src: url('fonts/Knapp-Light.otf') format('opentype'); font-weight: 300; font-style: normal; font-display: swap; }
+  @font-face { font-family: 'Knapp'; src: url('fonts/Knapp-Regular.otf') format('opentype'); font-weight: 400; font-style: normal; font-display: swap; }
+  @font-face { font-family: 'Knapp'; src: url('fonts/Knapp-Medium.otf') format('opentype'); font-weight: 500; font-style: normal; font-display: swap; }
+  @font-face { font-family: 'DiatypeMono'; src: url('fonts/PPNeueMontrealMono-Regular.otf') format('opentype'); font-weight: 400; font-style: normal; font-display: swap; }
+  @font-face { font-family: 'DiatypeMono'; src: url('fonts/PPNeueMontrealMono-Medium.otf') format('opentype'); font-weight: 500; font-style: normal; font-display: swap; }
+  @font-face { font-family: 'DiatypeMono'; src: url('fonts/PPNeueMontrealMono-Bold.otf') format('opentype'); font-weight: 700; font-style: normal; font-display: swap; }
+
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html, body {
     width: 100%; height: 100%; overflow: hidden; background: #000;
-    font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', 'Courier New', monospace;
+    font-family: 'Knapp', -apple-system, BlinkMacSystemFont, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
@@ -35,21 +42,23 @@
   }
   .start-content .legend-mark { margin-bottom: 24px; opacity: 0.6; }
   .start-content .legend-mark svg { width: 32px; height: 32px; }
-  .start-content .presents { font-size: 10px; letter-spacing: 6px; text-transform: uppercase; color: #444; }
+  .start-content .presents { font-family: 'DiatypeMono', monospace; font-size: 10px; letter-spacing: 6px; text-transform: uppercase; color: #444; }
   .start-content .title {
-    font-size: clamp(40px, 8vw, 64px); font-weight: 200; letter-spacing: -1px;
+    font-family: 'Knapp', sans-serif; font-weight: 500;
+    font-size: clamp(40px, 8vw, 64px); letter-spacing: -0.5px;
     color: #fff; margin: 8px 0 4px;
     text-shadow: 0 0 60px rgba(120,255,180,0.08);
   }
   .start-content .prompt {
+    font-family: 'DiatypeMono', monospace;
     font-size: 11px; color: #555; letter-spacing: 4px; text-transform: uppercase;
     margin-top: 28px; animation: breathe 4s ease-in-out infinite;
   }
   @keyframes breathe { 0%,100% { opacity: 0.2; } 50% { opacity: 0.75; } }
   .challenge-intro { text-align: center; margin: 16px 0 0; }
-  .challenge-intro .challenger { font-size: 11px; color: #555; letter-spacing: 4px; text-transform: uppercase; }
-  .challenge-intro .challenge-score { font-size: 48px; font-weight: 200; color: #ff4444; margin: 6px 0; line-height: 1; }
-  .challenge-intro .challenge-dare { font-size: 15px; color: #777; font-weight: 200; }
+  .challenge-intro .challenger { font-family: 'DiatypeMono', monospace; font-size: 11px; color: #555; letter-spacing: 4px; text-transform: uppercase; }
+  .challenge-intro .challenge-score { font-family: 'Knapp', sans-serif; font-size: 48px; font-weight: 300; color: #ff4444; margin: 6px 0; line-height: 1; }
+  .challenge-intro .challenge-dare { font-family: 'Knapp', sans-serif; font-size: 15px; color: #777; font-weight: 400; }
 
   /* --- DEATH SCREEN --- */
   #death-screen {
@@ -70,26 +79,31 @@
   }
   @keyframes fadeSlideIn { to { opacity: 1; transform: translateY(0); } }
   #death-screen .label-tag {
+    font-family: 'DiatypeMono', monospace;
     font-size: 10px; letter-spacing: 5px; text-transform: uppercase; color: #444;
     margin-bottom: 12px; animation-delay: 0s;
   }
   #death-screen .big-stat {
-    font-size: clamp(42px, 10vw, 56px); font-weight: 200; color: #fff; line-height: 1;
+    font-family: 'Knapp', sans-serif;
+    font-size: clamp(42px, 10vw, 56px); font-weight: 300; color: #fff; line-height: 1;
     animation-delay: 0.08s;
   }
   #death-screen .big-stat em { font-style: normal; color: #ff3b3b; }
   #death-screen .sub-stat {
-    font-size: 22px; font-weight: 200; color: #999; margin-top: 8px;
+    font-family: 'Knapp', sans-serif;
+    font-size: 22px; font-weight: 300; color: #999; margin-top: 8px;
     animation-delay: 0.16s;
   }
   #death-screen .sub-stat em { font-style: normal; color: #ff3b3b; }
   #death-screen .fees-list {
+    font-family: 'DiatypeMono', monospace;
     margin-top: 20px; font-size: 11px; color: #3a3a3a; text-align: left; line-height: 2;
     animation-delay: 0.24s;
   }
-  #death-screen .fees-list span { color: #ff3b3b; font-weight: bold; }
+  #death-screen .fees-list span { color: #ff3b3b; font-weight: 700; }
   #death-screen .editorial {
-    font-size: 12px; color: #444; margin-top: 20px; text-align: center; line-height: 1.6;
+    font-family: 'Knapp', sans-serif;
+    font-size: 13px; font-weight: 400; color: #444; margin-top: 20px; text-align: center; line-height: 1.6;
     max-width: 360px; animation-delay: 0.32s;
   }
   #death-screen .actions-row {
@@ -98,7 +112,7 @@
   }
   #death-screen button {
     padding: 11px 28px; background: transparent; border: 1px solid #282828;
-    color: #666; font-family: inherit; font-size: 11px;
+    color: #666; font-family: 'DiatypeMono', monospace; font-size: 11px;
     letter-spacing: 3px; text-transform: uppercase;
     cursor: pointer; transition: all 0.25s ease; border-radius: 2px;
   }
@@ -111,7 +125,7 @@
   }
   .legend-footer .legend-wordmark { opacity: 0.35; }
   .legend-footer .legend-wordmark svg { height: 16px; width: auto; }
-  .legend-footer .cta-text { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: #3a3a3a; }
+  .legend-footer .cta-text { font-family: 'DiatypeMono', monospace; font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: #3a3a3a; }
   .legend-footer .app-store-link { display: inline-block; transition: opacity 0.2s; }
   .legend-footer .app-store-link:hover { opacity: 0.75; }
   .legend-footer .app-store-link img { height: 40px; width: auto; border-radius: 6px; }
@@ -127,7 +141,7 @@
   .share-actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
   .share-actions button {
     padding: 10px 22px; background: transparent; border: 1px solid #282828;
-    color: #666; font-family: inherit; font-size: 10px; letter-spacing: 2px;
+    color: #666; font-family: 'DiatypeMono', monospace; font-size: 10px; letter-spacing: 2px;
     text-transform: uppercase; cursor: pointer; transition: all 0.2s; border-radius: 2px;
   }
   .share-actions button:hover { border-color: #888; color: #fff; }
@@ -137,7 +151,7 @@
     position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%);
     background: rgba(120,255,180,0.1); border: 1px solid rgba(120,255,180,0.25);
     color: #78FFB4; padding: 10px 28px; border-radius: 6px;
-    font-family: inherit; font-size: 11px; letter-spacing: 2px;
+    font-family: 'DiatypeMono', monospace; font-size: 11px; letter-spacing: 2px;
     z-index: 50; opacity: 0; transition: opacity 0.3s; pointer-events: none;
   }
   #share-toast.visible { opacity: 1; }
@@ -299,7 +313,7 @@
       sctx.lineTo(g.x,g.y+r); sctx.arcTo(g.x,g.y,g.x+r,g.y,r);
       sctx.closePath(); sctx.fill(); sctx.stroke();
       sctx.fillStyle = `rgba(255,60,60,${reveal * 0.55})`;
-      sctx.font = `bold ${sw < 500 ? 8 : 9}px monospace`;
+      sctx.font = `bold ${sw < 500 ? 8 : 9}px DiatypeMono, monospace`;
       sctx.textAlign = 'center'; sctx.textBaseline = 'middle';
       sctx.fillText(g.label, cx, cy);
       sctx.globalAlpha = 1;
@@ -667,7 +681,7 @@ function draw() {
   ctx.strokeStyle = nearMissTimer > 0 ? `rgba(255,255,255,${0.4 + nearMissTimer/18*0.4})` : `rgba(120,255,180,${0.15 + streakGlow})`;
   ctx.lineWidth = nearMissTimer > 0 ? 1.8 : 0.8; ctx.stroke();
 
-  ctx.fillStyle = '#000'; ctx.font = `bold ${Math.round(pr * 0.85)}px monospace`;
+  ctx.fillStyle = '#000'; ctx.font = `bold ${Math.round(pr * 0.85)}px DiatypeMono, monospace`;
   ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
   ctx.fillText('$', player.x, player.y + 0.5);
 
@@ -682,7 +696,7 @@ function draw() {
     ctx.fillStyle = ob.color + '10'; ctx.strokeStyle = ob.color + (ob.nearMissed ? 'aa' : '44'); ctx.lineWidth = 0.8;
     ctx.beginPath(); rr(ctx, -ob.w/2, -ob.h/2, ob.w, ob.h, 3); ctx.fill(); ctx.stroke();
     ctx.shadowBlur = 0;
-    ctx.fillStyle = ob.color; ctx.font = `bold ${W < 500 ? 8 : 10}px monospace`;
+    ctx.fillStyle = ob.color; ctx.font = `bold ${W < 500 ? 8 : 10}px DiatypeMono, monospace`;
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(ob.label, 0, 0);
     ctx.restore();
   });
@@ -699,7 +713,7 @@ function draw() {
   if (nearMissTimer > 0) {
     const na = nearMissTimer / 18;
     ctx.fillStyle = `rgba(120,255,180,${na * 0.4})`;
-    ctx.font = 'bold 10px monospace'; ctx.textAlign = 'center';
+    ctx.font = 'bold 10px DiatypeMono, monospace'; ctx.textAlign = 'center';
     ctx.fillText('CLOSE', player.x, player.y - 24);
   }
 
@@ -707,38 +721,38 @@ function draw() {
   if (gameState === 'playing' || gameState === 'dead') {
     const bc = getBalanceColor(balance);
 
-    ctx.fillStyle = '#383838'; ctx.font = '8px monospace'; ctx.textAlign = 'left';
+    ctx.fillStyle = '#383838'; ctx.font = '8px DiatypeMono, monospace'; ctx.textAlign = 'left';
     ctx.fillText('BALANCE', 16, 24);
-    ctx.fillStyle = bc; ctx.font = 'bold 22px monospace';
+    ctx.fillStyle = bc; ctx.font = 'bold 22px DiatypeMono, monospace';
     ctx.fillText('$' + balance.toFixed(2), 16, 46);
     ctx.fillStyle = '#111'; ctx.fillRect(16, 54, 100, 2);
     ctx.fillStyle = bc; ctx.fillRect(16, 54, 100 * (balance / 100), 2);
 
-    ctx.fillStyle = '#383838'; ctx.font = '8px monospace'; ctx.textAlign = 'right';
+    ctx.fillStyle = '#383838'; ctx.font = '8px DiatypeMono, monospace'; ctx.textAlign = 'right';
     ctx.fillText('YEARS', W - 16, 24);
-    ctx.fillStyle = '#fff'; ctx.font = 'bold 22px monospace';
+    ctx.fillStyle = '#fff'; ctx.font = 'bold 22px DiatypeMono, monospace';
     ctx.fillText(getYears(), W - 16, 46);
 
     if (bestYears > 0) {
-      ctx.fillStyle = '#282828'; ctx.font = '8px monospace';
+      ctx.fillStyle = '#282828'; ctx.font = '8px DiatypeMono, monospace';
       ctx.fillText('BEST ' + bestYears.toFixed(1), W - 16, 60);
     }
 
-    ctx.fillStyle = '#282828'; ctx.font = '8px monospace'; ctx.textAlign = 'center';
+    ctx.fillStyle = '#282828'; ctx.font = '8px DiatypeMono, monospace'; ctx.textAlign = 'center';
     ctx.fillText('FEES', W/2, 24);
-    ctx.fillStyle = '#ff4444'; ctx.font = 'bold 16px monospace';
+    ctx.fillStyle = '#ff4444'; ctx.font = 'bold 16px DiatypeMono, monospace';
     ctx.fillText('-$' + totalFeesHit.toFixed(2), W/2, 44);
 
     if (dodgedCount > 0) {
-      ctx.fillStyle = '#1e2e24'; ctx.font = '8px monospace';
+      ctx.fillStyle = '#1e2e24'; ctx.font = '8px DiatypeMono, monospace';
       ctx.fillText('DODGED', W/2, 58);
-      ctx.fillStyle = '#4a8a6a'; ctx.font = 'bold 11px monospace';
+      ctx.fillStyle = '#4a8a6a'; ctx.font = 'bold 11px DiatypeMono, monospace';
       ctx.fillText(String(dodgedCount), W/2, 72);
     }
 
     if (dodgeStreak >= 5) {
       ctx.fillStyle = `rgba(120,255,180,${0.3 + Math.sin(frameCount * 0.1) * 0.15})`;
-      ctx.font = 'bold 10px monospace'; ctx.textAlign = 'center';
+      ctx.font = 'bold 10px DiatypeMono, monospace'; ctx.textAlign = 'center';
       ctx.fillText('STREAK ' + dodgeStreak, W/2, H - 20);
     }
   }
@@ -789,30 +803,30 @@ function renderShareCard() {
   cx.fillStyle = gl; cx.fillRect(0, 0, w, h);
 
   // title
-  cx.fillStyle = '#383838'; cx.font = '9px monospace'; cx.textAlign = 'center';
+  cx.fillStyle = '#383838'; cx.font = '9px DiatypeMono, monospace'; cx.textAlign = 'center';
   cx.fillText('F E E   D O D G E', w/2, 32);
 
   // score
-  cx.fillStyle = '#fff'; cx.font = '200 58px monospace'; cx.fillText(getYears(), w/2, 100);
-  cx.fillStyle = '#444'; cx.font = '10px monospace'; cx.fillText('YEARS SURVIVED', w/2, 122);
+  cx.fillStyle = '#fff'; cx.font = '300 58px Knapp, sans-serif'; cx.fillText(getYears(), w/2, 100);
+  cx.fillStyle = '#444'; cx.font = '10px DiatypeMono, monospace'; cx.fillText('YEARS SURVIVED', w/2, 122);
 
   // stats row
-  cx.fillStyle = '#ff4444'; cx.font = 'bold 24px monospace';
+  cx.fillStyle = '#ff4444'; cx.font = 'bold 24px DiatypeMono, monospace';
   cx.fillText('-$' + totalFeesHit.toFixed(2), w*0.3, 170);
   cx.fillStyle = '#78FFB4'; cx.fillText(dodgedCount + ' dodged', w*0.7, 170);
-  cx.fillStyle = '#2a2a2a'; cx.font = '8px monospace';
+  cx.fillStyle = '#2a2a2a'; cx.font = '8px DiatypeMono, monospace';
   cx.fillText('FEES TAKEN', w*0.3, 185); cx.fillText('FEES DODGED', w*0.7, 185);
 
   // killer
   const sorted = Object.entries(feesHitMap).sort((a,b) => b[1] - a[1]);
-  if (sorted.length) { cx.fillStyle = '#2a2a2a'; cx.font = '9px monospace'; cx.fillText('Killed by: ' + sorted[0][0], w/2, 215); }
+  if (sorted.length) { cx.fillStyle = '#2a2a2a'; cx.font = '9px DiatypeMono, monospace'; cx.fillText('Killed by: ' + sorted[0][0], w/2, 215); }
 
   // dare
-  cx.fillStyle = '#78FFB4'; cx.font = 'bold 13px monospace';
+  cx.fillStyle = '#78FFB4'; cx.font = '500 13px DiatypeMono, monospace';
   cx.fillText(ensureHandle() + ' challenges you to beat ' + getYears() + ' years', w/2, 255);
 
   // branding
-  cx.fillStyle = '#222'; cx.font = '8px monospace';
+  cx.fillStyle = '#222'; cx.font = '8px DiatypeMono, monospace';
   cx.fillText('LEGEND  \u00B7  FEE DODGE', w/2, 290);
 
   // accent lines
