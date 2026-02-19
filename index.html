@@ -47,14 +47,14 @@
     position: relative; z-index: 1; display: flex; flex-direction: column;
     align-items: center; pointer-events: none; margin-top: -60px;
   }
-  .title-svg { width: clamp(320px, 52vw, 600px); height: auto; margin-bottom: 12px; }
+  .title-svg { width: clamp(340px, 54vw, 627px); height: auto; animation: titleBreath 4s ease-in-out infinite; }
+  @keyframes titleBreath { 0%,100% { filter: brightness(0.85); } 50% { filter: brightness(1); } }
 
-  .start-center .prompt {
-    font-family: 'Mono', monospace; font-size: 11px; letter-spacing: 4px;
-    text-transform: uppercase; color: #D4883A; margin-top: 16px;
-    animation: breathe 4s ease-in-out infinite;
+  .bg-illustration {
+    position: absolute; z-index: 0; top: 50%; left: 50%;
+    transform: translate(-50%, -38%); width: clamp(420px, 55vw, 575px); height: auto;
+    pointer-events: none;
   }
-  @keyframes breathe { 0%,100% { opacity: 0.25; } 50% { opacity: 0.85; } }
 
   .challenge-intro { text-align: center; margin: 14px 0 0; }
   .challenge-intro .challenger { font-family: 'Mono', monospace; font-size: 11px; color: #555; letter-spacing: 4px; text-transform: uppercase; }
@@ -241,35 +241,38 @@
 
   /* prize ticker */
   .prize-ticker {
-    position: absolute; bottom: 80px; left: 50%; transform: translateX(-50%);
+    position: absolute; bottom: 90px; left: 50%; transform: translateX(-50%);
     z-index: 2; display: flex; flex-direction: column; align-items: center;
-    gap: 6px; pointer-events: none;
+    gap: 4px; pointer-events: none;
   }
   .prize-ticker .earning-label {
-    font-family: 'Mono', monospace; font-size: 10px; letter-spacing: 2px;
-    color: #78FFB4; text-transform: uppercase;
+    font-family: 'Mono', monospace; font-size: 11px; letter-spacing: 2px;
+    color: #78FFB4;
   }
-  .prize-ticker .earning-label .rate { color: #78FFB4; }
   .prize-ticker .ticker-amount {
     display: flex; align-items: baseline; font-family: 'Knapp', sans-serif;
-    font-weight: 300; font-size: 32px; color: #fff; line-height: 1;
+    font-weight: 300; line-height: 1;
   }
-  .prize-ticker .ticker-amount .dollar { font-size: 20px; color: #555; margin-right: 2px; }
-  .prize-ticker .ticker-amount .main-digits { color: #fff; }
+  .prize-ticker .ticker-amount .main-digits { font-size: 38px; color: #ccc; }
   .prize-ticker .ticker-amount .micro-digits {
-    font-size: 18px; color: #444; position: relative; overflow: hidden;
+    font-size: 22px; color: #555;
   }
   .prize-ticker .ticker-amount .digit-slot {
     display: inline-block; position: relative; overflow: hidden;
-    height: 1.1em; vertical-align: bottom;
+    height: 1.15em; vertical-align: bottom;
   }
   .prize-ticker .ticker-amount .digit-slot .digit-inner {
-    display: inline-block; transition: transform 0.15s ease-out;
+    display: inline-block; transition: transform 0.12s ease-out;
+  }
+  .prize-ticker .ticker-divider {
+    width: 60px; height: 1px; background: rgba(255,255,255,0.06); margin: 6px 0;
+  }
+  .prize-ticker .prize-countdown {
+    font-family: 'Mono', monospace; font-size: 13px; color: #666; letter-spacing: 1px;
   }
   .prize-ticker .prize-info {
     font-family: 'Mono', monospace; font-size: 9px; letter-spacing: 2px;
     color: #555; text-transform: uppercase; text-align: center;
-    margin-top: 4px;
   }
   .prize-ticker .prize-info strong { color: #D4883A; font-weight: 500; }
 </style>
@@ -284,21 +287,22 @@
     <img src="logo.svg" alt="Legend" style="height:22px;width:auto;" />
   </div>
 
+  <img class="bg-illustration" src="illustration.svg" alt="" />
+
   <div class="start-center">
     <img class="title-svg" src="title-text.svg" alt="FEE DODGE" />
     <div id="challenge-intro" class="challenge-intro" style="display:none;"></div>
-    <div class="prompt" id="start-prompt">TAP OR CLICK TO START</div>
     <button class="lb-btn" id="lb-open-start" onclick="event.stopPropagation();document.getElementById('leaderboard').classList.add('visible');">View Leaderboard</button>
   </div>
 
   <div class="prize-ticker" id="prize-ticker">
-    <div class="earning-label">Earning <span class="rate">8.14%</span> APY</div>
+    <div class="earning-label">Earning 8.10%</div>
     <div class="ticker-amount">
-      <span class="dollar">$</span>
-      <span class="main-digits">10,000</span>
-      <span class="micro-digits">.<span id="tk-d1" class="digit-slot"><span class="digit-inner">0</span></span><span id="tk-d2" class="digit-slot"><span class="digit-inner">0</span></span><span id="tk-d3" class="digit-slot"><span class="digit-inner">0</span></span><span id="tk-d4" class="digit-slot"><span class="digit-inner">0</span></span><span id="tk-d5" class="digit-slot"><span class="digit-inner">0</span></span></span>
+      <span class="main-digits">$10,000.</span><span class="micro-digits"><span id="tk-d1" class="digit-slot"><span class="digit-inner">9</span></span><span id="tk-d2" class="digit-slot"><span class="digit-inner">1</span></span><span id="tk-d3" class="digit-slot"><span class="digit-inner">0</span></span><span id="tk-d4" class="digit-slot"><span class="digit-inner">5</span></span><span id="tk-d5" class="digit-slot"><span class="digit-inner">7</span></span></span>
     </div>
-    <div class="prize-info"><strong>1,000 USDC</strong> &middot; Top score every day wins &middot; 10 days</div>
+    <div class="ticker-divider"></div>
+    <div class="prize-countdown" id="prize-countdown">12:41:30</div>
+    <div class="prize-info">TOP SCORE WINS <strong>1,001.1234 USDC</strong></div>
   </div>
 
   <div class="corner-icon left" id="icon-left">
@@ -392,15 +396,6 @@
     ghosts.push({ x: Math.random()*2000-200, y: 40+Math.random()*(800), w: 80+l.length*4.5, h: 22, vx: (Math.random()>.5?1:-1)*(0.1+Math.random()*0.25), vy: (Math.random()-.5)*0.06, label: l });
   }
 
-  const feeCircle = {
-    rings: [
-      { r: 130, pct: '10.56%', dotAngle: 0, dotSpeed: 0.004 },
-      { r: 90, pct: '6.25%', dotAngle: 2.1, dotSpeed: -0.006 },
-      { r: 55, pct: '4.05%', dotAngle: 4.2, dotSpeed: 0.008 },
-    ],
-    cx: 0, cy: 0
-  };
-
   let gridOff = 0, amb = 0, t = 0;
 
   function draw() {
@@ -447,37 +442,6 @@
       sctx.globalAlpha = 1;
     }
 
-    // fee circle illustration (below center)
-    feeCircle.cx = sw / 2; feeCircle.cy = sh * 0.72;
-    const fcx = feeCircle.cx, fcy = feeCircle.cy;
-
-    for (const ring of feeCircle.rings) {
-      ring.dotAngle += ring.dotSpeed;
-      sctx.beginPath(); sctx.arc(fcx, fcy, ring.r, 0, Math.PI * 2);
-      sctx.strokeStyle = 'rgba(255,255,255,0.07)'; sctx.lineWidth = 0.6; sctx.stroke();
-
-      // animated dot on ring
-      const dx = fcx + Math.cos(ring.dotAngle) * ring.r;
-      const dy = fcy + Math.sin(ring.dotAngle) * ring.r;
-      sctx.beginPath(); sctx.arc(dx, dy, 3.5, 0, Math.PI * 2);
-      sctx.fillStyle = 'rgba(255,255,255,0.35)'; sctx.fill();
-
-      // percentage label near dot
-      const lx = fcx + Math.cos(ring.dotAngle) * (ring.r + 18);
-      const ly = fcy + Math.sin(ring.dotAngle) * (ring.r + 18);
-      sctx.fillStyle = 'rgba(255,255,255,0.2)'; sctx.font = '8px Mono, monospace';
-      sctx.textAlign = 'center'; sctx.textBaseline = 'middle';
-      sctx.fillText(ring.pct, lx, ly);
-    }
-
-    // USDC coin at center of fee circle
-    sctx.beginPath(); sctx.arc(fcx, fcy, 22, 0, Math.PI * 2);
-    sctx.fillStyle = 'rgba(38,112,196,0.12)'; sctx.fill();
-    sctx.strokeStyle = 'rgba(38,112,196,0.25)'; sctx.lineWidth = 1.2; sctx.stroke();
-    sctx.fillStyle = 'rgba(38,112,196,0.6)'; sctx.font = 'bold 16px Mono, monospace';
-    sctx.textAlign = 'center'; sctx.textBaseline = 'middle';
-    sctx.fillText('$', fcx, fcy + 1);
-
     // soft light cone
     const grd = sctx.createRadialGradient(mx, my, 0, mx, my, lr);
     grd.addColorStop(0, 'rgba(120,255,180,0.03)'); grd.addColorStop(0.5, 'rgba(120,255,180,0.008)'); grd.addColorStop(1, 'rgba(120,255,180,0)');
@@ -496,11 +460,12 @@
   requestAnimationFrame(draw);
 })();
 
-// Prize ticker — odometer-style digit rolling
+// Prize ticker — odometer digits + countdown
 (function() {
   const BASE = 10000;
-  const RATE = 0.0814;
+  const RATE = 0.0810;
   const PER_SEC = BASE * RATE / (365.25 * 24 * 3600);
+  const INITIAL_EARNED = 0.91;
   const startT = Date.now();
   const slots = [
     document.getElementById('tk-d1'),
@@ -509,39 +474,52 @@
     document.getElementById('tk-d4'),
     document.getElementById('tk-d5'),
   ];
-  let prevDigits = [0, 0, 0, 0, 0];
+  const countdownEl = document.getElementById('prize-countdown');
+  let prevDigits = [9, 1, 0, 5, 7];
 
   function tick() {
     const elapsed = (Date.now() - startT) / 1000;
-    const earned = elapsed * PER_SEC;
-    const cents = earned * 100000;
+    const totalEarned = INITIAL_EARNED + elapsed * PER_SEC;
+    const frac = totalEarned - Math.floor(totalEarned);
+    const micro = Math.floor(frac * 100000);
     const d = [
-      Math.floor(cents / 10000) % 10,
-      Math.floor(cents / 1000) % 10,
-      Math.floor(cents / 100) % 10,
-      Math.floor(cents / 10) % 10,
-      Math.floor(cents) % 10,
+      Math.floor(micro / 10000) % 10,
+      Math.floor(micro / 1000) % 10,
+      Math.floor(micro / 100) % 10,
+      Math.floor(micro / 10) % 10,
+      micro % 10,
     ];
 
     for (let i = 0; i < 5; i++) {
       if (d[i] !== prevDigits[i]) {
         const inner = slots[i].querySelector('.digit-inner');
         inner.style.transform = 'translateY(-100%)';
-        inner.style.transition = 'transform 0.12s ease-out';
+        inner.style.transition = 'transform 0.1s ease-out';
+        const newD = d[i];
         setTimeout(() => {
           inner.style.transition = 'none';
           inner.style.transform = 'translateY(100%)';
-          inner.textContent = d[i];
+          inner.textContent = newD;
           requestAnimationFrame(() => {
             requestAnimationFrame(() => {
-              inner.style.transition = 'transform 0.12s ease-out';
+              inner.style.transition = 'transform 0.1s ease-out';
               inner.style.transform = 'translateY(0)';
             });
           });
-        }, 120);
+        }, 100);
         prevDigits[i] = d[i];
       }
     }
+
+    // countdown to midnight UTC
+    const now = new Date();
+    const midnight = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1));
+    const rem = Math.max(0, Math.floor((midnight - now) / 1000));
+    const hh = String(Math.floor(rem / 3600)).padStart(2, '0');
+    const mm = String(Math.floor((rem % 3600) / 60)).padStart(2, '0');
+    const ss = String(rem % 60).padStart(2, '0');
+    countdownEl.textContent = `${hh}:${mm}:${ss}`;
+
     requestAnimationFrame(tick);
   }
   requestAnimationFrame(tick);
