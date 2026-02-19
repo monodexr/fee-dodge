@@ -593,7 +593,7 @@ const pt={x:0,y:0};
 function initGame(){
   player={x:W/2,y:H*0.75,radius:13};pt.x=player.x;pt.y=player.y;
   obstacles=[];particles=[];trailPoints=[];
-  balance=100;distance=0;gameSpeed=1.5;frameCount=0;
+  balance=100;distance=0;gameSpeed=1.875;frameCount=0;
   totalFeesHit=0;feesHitMap={};shakeAmount=0;flashAmount=0;
   nearMissTimer=0;nearMissCount=0;dodgedCount=0;dodgeStreak=0;hitShrink=0;
   legendFeesSmashed=0;legendFeesValue=0;legendRunStart=Date.now();
@@ -652,10 +652,10 @@ function lc(a,b,t){const pa=[parseInt(a.slice(1,3),16),parseInt(a.slice(3,5),16)
 
 function update(){
   if(gameState!=='playing')return;
-  frameCount++;distance+=gameSpeed;gameSpeed=1.5+distance*0.0003;
+  frameCount++;distance+=gameSpeed;gameSpeed=1.875+distance*0.000375;
   gridOffset=(gridOffset+gameSpeed*0.25)%40;hitShrink*=0.88;
   updateDrone(gameSpeed);if(frameCount%28===0)pulseBass();
-  const sr=Math.max(16,45-distance*0.007);if(frameCount%Math.floor(sr)===0)spawnOb();
+  const sr=Math.max(14,40-distance*0.009);if(frameCount%Math.floor(sr)===0)spawnOb();
 
   player.x+=(pt.x-player.x)*0.14;player.y+=(pt.y-player.y)*0.14;
   player.x=Math.max(player.radius,Math.min(W-player.radius,player.x));
@@ -709,6 +709,109 @@ function rr(c,x,y,w,h,r){if(c.roundRect){c.roundRect(x,y,w,h,r);return;}c.moveTo
 // USDC blue for player in legend mode
 const USDC_BLUE = '#2775CA';
 
+// Story crawl text — Star Wars style background narrative
+const STORY_LINES = [
+  'Long, long ago...',
+  '',
+  'There was a time when people needed',
+  'others to handle their assets.',
+  '',
+  'A time when it wasn\'t easy to buy,',
+  'sell, or transfer what was yours —',
+  'and someone else had to do it for you.',
+  '',
+  'A time of fees.',
+  '',
+  'Hidden fees. Monthly fees. Overdraft fees.',
+  'Wire fees. ATM fees. Inactivity fees.',
+  'Fees for using your own money.',
+  '',
+  'Over decades, these fees built',
+  'enormous institutions whose sole purpose',
+  'became taking money out of your pocket.',
+  '',
+  'The average U.S. savings rate?',
+  '0.39% APY.',
+  '',
+  'You deposit $10,000.',
+  'Your bank pays you $39 per year.',
+  '',
+  'But that same $10,000?',
+  'Your bank lends it out at 7-8%.',
+  'They earn $750. You get $39.',
+  '',
+  'They keep $711 of the value',
+  'your money generated.',
+  '',
+  'You brought the assets.',
+  'Why do they get paid?',
+  '',
+  'In 2025 alone, U.S. banks earned',
+  '$730 billion in net interest income.',
+  '',
+  'Seven hundred and thirty billion.',
+  'From your deposits.',
+  '',
+  'Meanwhile, $10.85 trillion sits',
+  'in U.S. savings and checking accounts,',
+  'earning almost nothing.',
+  '',
+  'The median American has $8,000 saved.',
+  'At 0.39%, that\'s $31 per year.',
+  '',
+  'At 6.5% on DeFi?',
+  'That same $8,000 earns $520.',
+  '',
+  'The difference: $489 per year.',
+  'Every year. Compounding.',
+  '',
+  'Your bank doesn\'t want you',
+  'to know this math.',
+  '',
+  'They call it "safety."',
+  'They call it "convenience."',
+  'They call it "trust."',
+  '',
+  'But trust is not a fee.',
+  'Safety is not a percentage.',
+  'And convenience should not cost you',
+  '$138,000 over a lifetime.',
+  '',
+  'There is another way.',
+  '',
+  'A way where your money works for you.',
+  '24 hours a day. 7 days a week.',
+  'No middlemen. No hidden fees.',
+  'No one taking a cut while you sleep.',
+  '',
+  'Self-custody. Real yield.',
+  'Your keys. Your money. Your future.',
+  '',
+  'The old system was built for banks.',
+  '',
+  'The new one is built for you.',
+];
+
+const STORY_120 = [
+  '',
+  'Still here?',
+  '',
+  'Most people have already lost by now.',
+  '',
+  'The fees are relentless.',
+  'They don\'t sleep. They don\'t stop.',
+  'They don\'t care how good you are.',
+  '',
+  'Sound familiar?',
+  '',
+  'In the real world, you can\'t dodge fees.',
+  'You can only eliminate them.',
+  '',
+  'One app. Zero fees.',
+  'That\'s not a game.',
+  'That\'s Legend.',
+];
+
 function draw(){
   if(!player){ctx.fillStyle='#000';ctx.fillRect(0,0,W,H);return;}
   ctx.save();
@@ -734,6 +837,51 @@ function draw(){
   ctx.fillStyle=vig;ctx.fillRect(0,0,W,H);
 
   if(flashAmount>0.05){ctx.fillStyle=`rgba(255,40,40,${flashAmount*0.07})`;ctx.fillRect(0,0,W,H);}
+
+  // story crawl — scrolling background text
+  if(gameState==='playing'){
+    const elapsed = frameCount / 60;
+    const scrollSpeed = 0.6;
+    const lineH = 28;
+    const startY = H + 40;
+    const offset = elapsed * scrollSpeed * lineH;
+    const lines = STORY_LINES.concat(elapsed >= 120 ? STORY_120 : []);
+
+    ctx.save();
+    ctx.font = '300 14px Knapp, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'top';
+
+    for (let i = 0; i < lines.length; i++) {
+      const y = startY - offset + i * lineH;
+      if (y < -30 || y > H + 30) continue;
+
+      // fade at edges
+      let alpha = 0.065;
+      if (y < 80) alpha *= y / 80;
+      if (y > H - 60) alpha *= (H - y) / 60;
+      if (alpha <= 0) continue;
+
+      ctx.fillStyle = `rgba(255,255,255,${alpha})`;
+      ctx.fillText(lines[i], W / 2, y);
+    }
+
+    // 120s distraction: pulsing warning text
+    if (elapsed >= 120) {
+      const pulse = 0.5 + Math.sin(frameCount * 0.05) * 0.3;
+      ctx.font = 'bold 11px Mono, monospace';
+      ctx.fillStyle = `rgba(255,68,68,${0.08 * pulse})`;
+      ctx.fillText('THE FEES NEVER STOP', W / 2, H / 2 - 60);
+      ctx.fillText('THE FEES NEVER STOP', W / 2, H / 2 + 60);
+      // subtle scanline bars
+      for (let y = (frameCount * 2) % 120; y < H; y += 120) {
+        ctx.fillStyle = `rgba(255,40,40,${0.015 * pulse})`;
+        ctx.fillRect(0, y, W, 2);
+      }
+    }
+
+    ctx.restore();
+  }
 
   // trail
   if(trailPoints.length>1){
