@@ -76,10 +76,12 @@
 
   #legend-mode-toast {
     position: absolute; bottom: 80px; left: 50%; transform: translateX(-50%);
-    z-index: 5; font-family: 'Mono', monospace; font-size: 10px; letter-spacing: 4px;
+    z-index: 25; font-family: 'Mono', monospace; font-size: 10px; letter-spacing: 4px;
     text-transform: uppercase; color: #78FFB4; opacity: 0;
     transition: opacity 0.5s; pointer-events: none;
     text-shadow: 0 0 20px rgba(120,255,180,0.3);
+    background: rgba(0,0,0,0.85); padding: 10px 24px; border-radius: 6px;
+    border: 1px solid rgba(120,255,180,0.15);
   }
   #legend-mode-toast.visible { opacity: 1; }
 
@@ -661,6 +663,15 @@ let particles=[],trailPoints=[];
 let nearMissTimer=0,nearMissCount=0,gridOffset=0,dodgedCount=0,dodgeStreak=0;
 let hitShrink=0,bestYears=parseFloat(localStorage.getItem('fd_best')||'0');
 let legendFeesSmashed=0,legendFeesValue=0,legendRunStart=0;
+
+// distraction system
+const DISTRACTIONS = [
+  { at: 20, name: 'BANKER HOURS', duration: 360, announced: false, active: false, startFrame: 0 },
+  { at: 40, name: 'FEE MAGNET', duration: 420, announced: false, active: false, startFrame: 0 },
+  { at: 60, name: 'INVERTED', duration: 300, announced: false, active: false, startFrame: 0 },
+];
+let announceText = '', announceTimer = 0;
+let distractionControlDrift = { x: 0, y: 0 };
 const pt={x:0,y:0};
 
 function initGame(){
@@ -670,6 +681,8 @@ function initGame(){
   totalFeesHit=0;feesHitMap={};shakeAmount=0;flashAmount=0;
   nearMissTimer=0;nearMissCount=0;dodgedCount=0;dodgeStreak=0;hitShrink=0;
   legendFeesSmashed=0;legendFeesValue=0;legendRunStart=Date.now();
+  DISTRACTIONS.forEach(d=>{d.announced=false;d.active=false;d.startFrame=0;});
+  announceText='';announceTimer=0;
   gameState='playing';initAudio();
   document.getElementById('end-run-btn').style.display='none';
 }
@@ -730,7 +743,8 @@ function update(){
   updateDrone(gameSpeed);if(frameCount%28===0)pulseBass();
   const sr=Math.max(14,40-distance*0.009);if(frameCount%Math.floor(sr)===0)spawnOb();
 
-  player.x+=(pt.x-player.x)*0.14;player.y+=(pt.y-player.y)*0.14;
+  const moveSpeed = DISTRACTIONS[0].active ? 0.05 : 0.14;
+  player.x+=(pt.x-player.x)*moveSpeed;player.y+=(pt.y-player.y)*moveSpeed;
   player.x=Math.max(player.radius,Math.min(W-player.radius,player.x));
   player.y=Math.max(player.radius,Math.min(H-player.radius,player.y));
 
@@ -769,6 +783,35 @@ function update(){
   }
   particles=particles.filter(p=>{p.x+=p.vx;p.y+=p.vy;p.life-=p.spark?0.045:0.022;p.vx*=0.94;p.vy*=p.spark?0.9:0.95;if(p.spark)p.vy+=0.12;return p.life>0;});
   shakeAmount*=0.8;flashAmount*=0.82;
+
+  // distraction system
+  const gameSec = frameCount / 60;
+  if(announceTimer > 0) announceTimer--;
+
+  for(const d of DISTRACTIONS){
+    if(!d.announced && gameSec >= d.at){
+      d.announced = true;
+      announceText = d.name;
+      announceTimer = 150;
+      d.startFrame = frameCount + 150;
+    }
+    if(d.announced && frameCount >= d.startFrame && frameCount < d.startFrame + d.duration){
+      d.active = true;
+    } else {
+      d.active = false;
+    }
+  }
+
+  // FEE MAGNET: curve fees toward player
+  if(DISTRACTIONS[1].active){
+    for(const ob of obstacles){
+      if(ob.hit) continue;
+      const dx = player.x - (ob.x + ob.w/2), dy = player.y - (ob.y + ob.h/2);
+      const dist = Math.sqrt(dx*dx + dy*dy) || 1;
+      ob.vx += (dx / dist) * 0.12;
+      ob.vy += (dy / dist) * 0.12;
+    }
+  }
 
   // show End Run button after 30s in Legend Mode
   if(window._legendMode && gameState==='playing' && (Date.now()-legendRunStart)>30000){
@@ -889,6 +932,14 @@ function draw(){
   if(!player){ctx.fillStyle='#000';ctx.fillRect(0,0,W,H);return;}
   ctx.save();
   if(shakeAmount>0.5)ctx.translate((Math.random()-.5)*shakeAmount*2,(Math.random()-.5)*shakeAmount*2);
+
+  // INVERTED distraction — flip entire canvas
+  if(DISTRACTIONS[2].active){
+    ctx.translate(W/2, H/2);
+    ctx.rotate(Math.PI);
+    ctx.translate(-W/2, -H/2);
+  }
+
   ctx.fillStyle='#000';ctx.fillRect(0,0,W,H);
 
   // grid
@@ -910,6 +961,45 @@ function draw(){
   ctx.fillStyle=vig;ctx.fillRect(0,0,W,H);
 
   if(flashAmount>0.05){ctx.fillStyle=`rgba(255,40,40,${flashAmount*0.07})`;ctx.fillRect(0,0,W,H);}
+
+  // BANKER HOURS overlay — dim screen + CLOSED watermark
+  if(DISTRACTIONS[0].active){
+    ctx.fillStyle='rgba(0,0,0,0.35)';ctx.fillRect(0,0,W,H);
+    ctx.save();
+    ctx.translate(W/2,H/2);ctx.rotate(-0.15);
+    ctx.fillStyle='rgba(255,255,255,0.03)';
+    ctx.font=`bold ${W<500?40:80}px Knapp, sans-serif`;
+    ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText('CLOSED',0,0);
+    ctx.restore();
+  }
+
+  // FEE MAGNET overlay — subtle red vignette pulse
+  if(DISTRACTIONS[1].active){
+    const mp=0.5+Math.sin(frameCount*0.08)*0.3;
+    const mv=ctx.createRadialGradient(player.x,player.y,50,player.x,player.y,300);
+    mv.addColorStop(0,'rgba(0,0,0,0)');
+    mv.addColorStop(1,`rgba(255,30,30,${0.04*mp})`);
+    ctx.fillStyle=mv;ctx.fillRect(0,0,W,H);
+  }
+
+  // announcement text — big word slam
+  if(announceTimer>0){
+    const t=announceTimer/150;
+    const scale=t>0.85?1+(1-t)/0.15*0.3:1;
+    const alpha=t>0.2?Math.min(1,(1-t)/0.15*0.6+0.4):t/0.2;
+    ctx.save();
+    ctx.translate(W/2,H/2);
+    ctx.scale(scale,scale);
+    ctx.fillStyle=`rgba(255,255,255,${alpha*0.18})`;
+    ctx.font=`500 ${W<500?48:90}px Knapp, sans-serif`;
+    ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText(announceText,0,0);
+    ctx.fillStyle=`rgba(255,146,20,${alpha*0.5})`;
+    ctx.font=`500 ${W<500?46:88}px Knapp, sans-serif`;
+    ctx.fillText(announceText,0,0);
+    ctx.restore();
+  }
 
   // story crawl — scrolling background text
   if(gameState==='playing'){
