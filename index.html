@@ -159,14 +159,14 @@
   .tut-inner .tut-rules { list-style: none; counter-reset: rules; }
   .tut-inner .tut-rules li {
     counter-increment: rules;
-    font-family: 'Mono'; font-size: 12px; color: #999; line-height: 1.8;
-    padding: 8px 0; border-bottom: 1px solid #141414;
-    display: flex; gap: 12px; align-items: flex-start;
+    font-family: 'Mono'; font-size: 12px; color: #888; line-height: 1.7;
+    padding: 10px 0; border-bottom: 1px solid #141414;
+    padding-left: 32px; position: relative;
   }
   .tut-inner .tut-rules li::before {
     content: counter(rules);
     font-family: 'Mono'; font-size: 11px; font-weight: 700; color: #D4883A;
-    min-width: 18px; text-align: right;
+    position: absolute; left: 0; top: 10px;
   }
   .tut-inner .tut-rules li em { font-style: normal; color: #ff4444; }
   .tut-inner .tut-rules li strong { color: #78FFB4; font-weight: 500; }
