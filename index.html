@@ -677,20 +677,20 @@ let audioCtx, masterGain, bassOsc, bassGain, droneOsc, droneGain, audioStarted =
 function initAudio() {
   if (audioStarted) return; audioStarted = true;
   audioCtx = new (window.AudioContext||window.webkitAudioContext)();
-  masterGain = audioCtx.createGain(); masterGain.gain.value = 0.25; masterGain.connect(audioCtx.destination);
+  masterGain = audioCtx.createGain(); masterGain.gain.value = 0.7; masterGain.connect(audioCtx.destination);
   droneOsc = audioCtx.createOscillator(); droneGain = audioCtx.createGain();
-  droneOsc.type='sine'; droneOsc.frequency.value=55; droneGain.gain.value=0.05;
+  droneOsc.type='sine'; droneOsc.frequency.value=55; droneGain.gain.value=0.1;
   droneOsc.connect(droneGain); droneGain.connect(masterGain); droneOsc.start();
   bassOsc = audioCtx.createOscillator(); bassGain = audioCtx.createGain();
   bassOsc.type='triangle'; bassOsc.frequency.value=82.4; bassGain.gain.value=0;
   bassOsc.connect(bassGain); bassGain.connect(masterGain); bassOsc.start();
 }
-function playHit(v){if(!audioCtx)return;const o=audioCtx.createOscillator(),g=audioCtx.createGain(),f=audioCtx.createBiquadFilter();o.type='sawtooth';o.frequency.value=100+Math.min(v,35)*10;f.type='lowpass';f.frequency.value=600+v*20;f.Q.value=6;g.gain.value=0.12;o.connect(f);f.connect(g);g.connect(masterGain);o.start();g.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+0.2);o.stop(audioCtx.currentTime+0.25);}
-function playNM(){if(!audioCtx)return;const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type='sine';o.frequency.value=1400;g.gain.value=0.03;o.connect(g);g.connect(masterGain);o.start();o.frequency.exponentialRampToValueAtTime(700,audioCtx.currentTime+0.07);g.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+0.09);o.stop(audioCtx.currentTime+0.1);}
-function playDeath(){if(!audioCtx)return;const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type='sawtooth';o.frequency.value=180;g.gain.value=0.18;o.connect(g);g.connect(masterGain);o.start();o.frequency.exponentialRampToValueAtTime(25,audioCtx.currentTime+1);g.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+1.2);o.stop(audioCtx.currentTime+1.3);if(droneGain)droneGain.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+0.6);}
-function playDodge(){if(!audioCtx)return;const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type='sine';o.frequency.value=600+dodgeStreak*80;g.gain.value=0.015;o.connect(g);g.connect(masterGain);o.start();o.frequency.exponentialRampToValueAtTime(o.frequency.value*1.2,audioCtx.currentTime+0.05);g.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+0.08);o.stop(audioCtx.currentTime+0.1);}
-function updateDrone(s){if(!droneOsc)return;droneOsc.frequency.value=55+s*6;droneGain.gain.value=Math.min(0.1,0.03+s*0.006);}
-function pulseBass(){if(!bassGain)return;bassGain.gain.cancelScheduledValues(audioCtx.currentTime);bassGain.gain.setValueAtTime(0.06,audioCtx.currentTime);bassGain.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+0.25);}
+function playHit(v){if(!audioCtx)return;const o=audioCtx.createOscillator(),g=audioCtx.createGain(),f=audioCtx.createBiquadFilter();o.type='sawtooth';o.frequency.value=100+Math.min(v,35)*10;f.type='lowpass';f.frequency.value=600+v*20;f.Q.value=6;g.gain.value=0.3;o.connect(f);f.connect(g);g.connect(masterGain);o.start();g.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+0.2);o.stop(audioCtx.currentTime+0.25);}
+function playNM(){if(!audioCtx)return;const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type='sine';o.frequency.value=1400;g.gain.value=0.1;o.connect(g);g.connect(masterGain);o.start();o.frequency.exponentialRampToValueAtTime(700,audioCtx.currentTime+0.07);g.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+0.09);o.stop(audioCtx.currentTime+0.1);}
+function playDeath(){if(!audioCtx)return;const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type='sawtooth';o.frequency.value=180;g.gain.value=0.4;o.connect(g);g.connect(masterGain);o.start();o.frequency.exponentialRampToValueAtTime(25,audioCtx.currentTime+1);g.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+1.2);o.stop(audioCtx.currentTime+1.3);if(droneGain)droneGain.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+0.6);}
+function playDodge(){if(!audioCtx)return;const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type='sine';o.frequency.value=600+dodgeStreak*80;g.gain.value=0.05;o.connect(g);g.connect(masterGain);o.start();o.frequency.exponentialRampToValueAtTime(o.frequency.value*1.2,audioCtx.currentTime+0.05);g.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+0.08);o.stop(audioCtx.currentTime+0.1);}
+function updateDrone(s){if(!droneOsc)return;droneOsc.frequency.value=55+s*6;droneGain.gain.value=Math.min(0.2,0.06+s*0.01);}
+function pulseBass(){if(!bassGain)return;bassGain.gain.cancelScheduledValues(audioCtx.currentTime);bassGain.gain.setValueAtTime(0.15,audioCtx.currentTime);bassGain.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+0.25);}
 
 let W,H; function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight;} resize(); window.addEventListener('resize',resize);
 
@@ -847,7 +847,7 @@ function update(){
           balance=Math.min(100,balance+20);
           spawnP(player.x,player.y,'#78FFB4',15,6);
           shakeAmount=3;
-          if(audioCtx){const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type='sine';o.frequency.value=600;g.gain.value=0.07;o.connect(g);g.connect(masterGain);o.start();o.frequency.exponentialRampToValueAtTime(1200,audioCtx.currentTime+0.15);g.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+0.2);o.stop(audioCtx.currentTime+0.25);}
+          if(audioCtx){const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type='sine';o.frequency.value=600;g.gain.value=0.2;o.connect(g);g.connect(masterGain);o.start();o.frequency.exponentialRampToValueAtTime(1200,audioCtx.currentTime+0.15);g.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+0.2);o.stop(audioCtx.currentTime+0.25);}
           continue;
         }
         if(window._legendMode){
